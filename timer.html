@@ -55,6 +55,12 @@
          background-color: #555;
         border-radius: 3px;
     }
+    @media (max-width: 768px) {
+      #mobile-start-button {
+        display: block;
+      }
+    }
+
   </style>
   <script type="module">
     import 'https://cdn.cubing.net/v0/js/cubing/twisty';
@@ -64,6 +70,24 @@
 <body>
   <header>
     <h1>TIMER</h1>
+    <button id="mobile-start-button" style="
+      display: none;
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 16px 32px;
+      font-size: 20px;
+      background-color: #222;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 9999;
+    ">
+      START / STOP
+    </button>
+
   </header>
   <a href="index.html" style="position: absolute; top: 20px; left: 20px; color: white; font-size: 16px; text-decoration: none;">← Back to Home</a>
   <main style="display: flex; justify-content: center; align-items: flex-start; padding: 60px 40px; gap: 100px;">
@@ -80,6 +104,7 @@
     <!-- 左邊：計時器 -->
     <div style="text-align: center;">
       <div id="timer-display" style="font-size: 100px; color: white; font-weight: bold;">0.000</div>
+      
     </div>
     <div id="scramble"></div>
 
@@ -409,9 +434,12 @@
         loadRecords();
         updateScramble();  // ✅ 顯示第一個 scramble
     });
-    // 手機觸控：模擬空白鍵長按計時邏輯
-    document.addEventListener("touchstart", (e) => {
-      if (e.target.closest("#command-area")) return;  // 點指令區忽略
+    const mobileButton = document.getElementById("mobile-start-button");
+    let mobileHolding = false;
+    let mobileHoldTimeout = null;
+    let mobileReadyToStart = false;
+
+    mobileButton.addEventListener("touchstart", (e) => {
       e.preventDefault();
 
       if (timerRunning) {
@@ -424,26 +452,24 @@
         return;
       }
 
-      if (!holding) {
-        holding = true;
+      if (!mobileHolding) {
+        mobileHolding = true;
         display.style.color = "red";
-        holdTimeout = setTimeout(() => {
-          if (holding) {
+        mobileHoldTimeout = setTimeout(() => {
+          if (mobileHolding) {
             display.style.color = "green";
-            readyToStart = true;
+            mobileReadyToStart = true;
           }
         }, 300);
       }
     }, { passive: false });
 
-
-    document.addEventListener("touchend", (e) => {
-      if (e.target.closest("#command-area")) return;
+    mobileButton.addEventListener("touchend", (e) => {
       e.preventDefault();
 
-      if (holding) {
-        clearTimeout(holdTimeout);
-        if (readyToStart) {
+      if (mobileHolding) {
+        clearTimeout(mobileHoldTimeout);
+        if (mobileReadyToStart) {
           display.style.color = "white";
           display.textContent = "0.000";
           startTime = performance.now();
@@ -455,11 +481,10 @@
         } else {
           display.style.color = "white";
         }
-        holding = false;
-        readyToStart = false;
+        mobileHolding = false;
+        mobileReadyToStart = false;
       }
     }, { passive: false });
-
 
   </script>
   
