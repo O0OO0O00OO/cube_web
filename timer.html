@@ -409,9 +409,11 @@
         loadRecords();
         updateScramble();  // ✅ 顯示第一個 scramble
     });
-    // 手機點擊螢幕也能啟動/停止
-    document.addEventListener("click", () => {
-      // 模擬按下空白鍵
+    // 手機觸控：模擬空白鍵長按計時邏輯
+    document.addEventListener("touchstart", (e) => {
+      if (e.target.closest("#command-area")) return;  // 點指令區忽略
+      e.preventDefault();
+
       if (timerRunning) {
         clearInterval(timerInterval);
         timerRunning = false;
@@ -431,7 +433,15 @@
             readyToStart = true;
           }
         }, 300);
-      } else {
+      }
+    }, { passive: false });
+
+
+    document.addEventListener("touchend", (e) => {
+      if (e.target.closest("#command-area")) return;
+      e.preventDefault();
+
+      if (holding) {
         clearTimeout(holdTimeout);
         if (readyToStart) {
           display.style.color = "white";
@@ -448,7 +458,7 @@
         holding = false;
         readyToStart = false;
       }
-    });
+    }, { passive: false });
 
 
   </script>
