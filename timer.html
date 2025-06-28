@@ -186,6 +186,8 @@
         commandInput.focus();
       }
     });
+    
+
     // Enter 執行指令
     commandInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") handleCommand();
@@ -407,6 +409,48 @@
         loadRecords();
         updateScramble();  // ✅ 顯示第一個 scramble
     });
+    // 手機點擊螢幕也能啟動/停止
+    document.addEventListener("click", () => {
+      // 模擬按下空白鍵
+      if (timerRunning) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        display.style.color = "white";
+        const elapsed = ((performance.now() - startTime) / 1000).toFixed(3);
+        addRecord(parseFloat(elapsed));
+        updateScramble();
+        return;
+      }
+
+      if (!holding) {
+        holding = true;
+        display.style.color = "red";
+        holdTimeout = setTimeout(() => {
+          if (holding) {
+            display.style.color = "green";
+            readyToStart = true;
+          }
+        }, 300);
+      } else {
+        clearTimeout(holdTimeout);
+        if (readyToStart) {
+          display.style.color = "white";
+          display.textContent = "0.000";
+          startTime = performance.now();
+          timerInterval = setInterval(() => {
+            const elapsed = (performance.now() - startTime) / 1000;
+            display.textContent = elapsed.toFixed(3);
+          }, 10);
+          timerRunning = true;
+        } else {
+          display.style.color = "white";
+        }
+        holding = false;
+        readyToStart = false;
+      }
+    });
+
+
   </script>
   
 </body>
