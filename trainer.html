@@ -218,7 +218,8 @@
 
       solutionList = filtered.map(picked => ({
         display: picked.display,
-        alg: picked.alg
+        alg: picked.alg,
+        allowRandomU: picked.allowRandomU
       }));
 
       // 隨機打亂
@@ -321,15 +322,19 @@
           return options[Math.floor(Math.random() * options.length)];
         }
 
-        if (prependRandom) {
+        const allowRandomU = item.allowRandomU !== false;  // 預設 true，false 則禁止
+
+        if (prependRandom && allowRandomU) {
           const randMove = randomU();
           mainAlg = `${randMove} ${mainAlg}`;
           miniAlg = `${randMove} ${miniAlg}`;
         }
 
-        if (appendRandom) {
+
+        if (appendRandom && allowRandomU) {
           mainAlg = `${mainAlg} ${randomU()}`;
         }
+
 
         return {
           display: item.display,
