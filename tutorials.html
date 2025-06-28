@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TUTORIALS</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: sans-serif;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    a.back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 600px;
+      margin: 40px auto;
+    }
+
+    .button-grid a {
+      display: block;
+      padding: 20px;
+      background-color: #333;
+      text-decoration: none;
+      color: white;
+      font-size: 18px;
+      border-radius: 8px;
+      text-align: center;
+      transition: background-color 0.2s;
+    }
+
+    .button-grid a:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <a class="back-link" href="index.html">← Back to Home</a>
+  <h1>TUTORIALS</h1>
+
+  <div class="button-grid">
+    <a href="tutorials_oll.html">OLL</a>
+    <a href="tutorials_pll.html">PLL</a>
+    <a href="tutorials_coll.html">COLL</a>
+    <a href="tutorials_ble.html">BLE</a>
+    <a href="tutorials_bld.html">BLD</a>
+    <a href="tutorials_others.html">OTHERS</a>
+  </div>
+
+</body>
+<script>
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      window.location.href = "index.html";
+    }
+
+    const keyMap = {
+      "1": "tutorials_oll.html",
+      "2": "tutorials_pll.html",
+      "3": "tutorials_coll.html",
+      "4": "tutorials_ble.html",
+      "5": "tutorials_bld.html",
+      "6": "tutorials_others.html"
+    };
+
+    if (keyMap[e.key]) {
+      window.location.href = keyMap[e.key];
+    }
+  });
+</script>
+
+</html>

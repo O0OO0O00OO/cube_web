@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SELF CUBE TRAINER</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 600px;
+      margin: 40px auto;
+    }
+    .button-grid a {
+      display: block;
+      padding: 20px;
+      background-color: #222;
+      text-decoration: none;
+      color: white;
+      font-size: 18px;
+      border-radius: 8px;
+      transition: background-color 0.2s;
+    }
+    .button-grid a:hover {
+      background-color: #444;
+    }
+    
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>SELF CUBE TRAINER</h1>
+    <p>Training Platform</p>
+  </header>
+
+  <main>
+    <div class="button-grid">
+      <a href="timer.html">TIMER</a>
+      <a href="trainer.html">TRAINER</a>
+      <a href="tutorials.html">TUTORIALS</a>
+      <a href="solver.html">SOLVER</a>
+      <a href="statistics.html">STATISTICS</a>
+      <a href="settings.html">SETTINGS</a>
+    </div>
+    <twisty-player
+      id="twisty"
+      style="width: 250px;  height: 250px;  margin: auto;"
+      puzzle="3x3x3"
+      alg = "x2"
+      hint-facelets="floating"
+      background="none"
+      control-panel	="none"
+      experimental-drag-input	="none"
+
+    ></twisty-player>
+  </main>
+
+  <script>
+    document.addEventListener("keydown", function (e) {
+      const keyMap = {
+        "1": "timer.html",
+        "2": "trainer.html",
+        "3": "tutorials.html",
+        "4": "solver.html",
+        "5": "statistics.html",
+        "6": "settings.html"
+      };
+
+      const target = keyMap[e.key];
+      if (target) {
+        window.location.href = target;
+      }
+    });
+
+    let angle = 0;
+    setInterval(() => {
+      angle = (angle + 0.5) % 360; // 每次增加 0.2 度（你可以調快或調慢）
+      document.getElementById("twisty").setAttribute("camera-longitude", angle.toFixed(2));
+    }, 30); // 每 30 毫秒更新一次
+  </script>
+  <script src="https://cdn.cubing.net/v0/js/cubing/twisty" type="module"></script>
+
+</body>
+</html>

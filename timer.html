@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TIMER</title>
+  <style>
+    body {
+        background-color: black;
+        color: white;
+        font-family: sans-serif;
+        text-align: center;
+        padding: 20px;
+    }
+    #timer-display {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 100px;
+        color: white;
+        font-weight: bold;
+    }
+    #scramble {
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 20px;
+        color: #aaa;
+    }
+    .record-panel {
+        width: 300px;
+        overflow-y: auto;
+        max-height: 480px; /* 可容納 12 行左右（視字體而定） */
+    }
+
+    #record-table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+        color: white;
+    }
+
+    #record-table th,
+    #record-table td {
+        padding: 4px 8px;
+        text-align: right;
+        height: 28px;
+        font-size: 14px;
+    }
+    .record-panel::-webkit-scrollbar {
+        width: 8px;
+    }
+    .record-panel::-webkit-scrollbar-thumb {
+         background-color: #555;
+        border-radius: 3px;
+    }
+  </style>
+  <script type="module">
+    import 'https://cdn.cubing.net/v0/js/cubing/twisty';
+  </script>
+
+</head>
+<body>
+  <header>
+    <h1>TIMER</h1>
+  </header>
+  <a href="index.html" style="position: absolute; top: 20px; left: 20px; color: white; font-size: 16px; text-decoration: none;">← Back to Home</a>
+  <main style="display: flex; justify-content: center; align-items: flex-start; padding: 60px 40px; gap: 100px;">
+    <twisty-player
+      id="twisty"
+      style="position: absolute;left: 60px;top:50%; width: 250px;  height: 250px;  margin: auto;"
+      puzzle="3x3x3"
+      hint-facelets="floating"
+      background="none"
+      control-panel	="none"
+    ></twisty-player>
+    
+    
+    <!-- 左邊：計時器 -->
+    <div style="text-align: center;">
+      <div id="timer-display" style="font-size: 100px; color: white; font-weight: bold;">0.000</div>
+    </div>
+    <div id="scramble"></div>
+
+    <!-- 右邊：表格 + 指令 -->
+    <div style="width: 320px;">
+        <div class="record-panel" style="position: absolute;right: 60px;top: 120px;width: 300px;">
+            <table id="record-table">
+            <thead>
+                <tr>
+                <th>#</th>
+                <th>Time(s)</th>
+                <th>ao5</th>
+                <th>ao12</th>
+                <th>ao100</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 自動產生資料列 -->
+            </tbody>
+            </table>
+        </div>
+  
+        <div id="command-area" style="position: absolute;right: 35px;bottom: 50px;width: 300px;">
+            <input id="command-input" type="text" placeholder='Enter command (e.g., c, +, d5)' style="width: 200px; padding: 5px;">
+            <button onclick="handleCommand()">Execute</button>
+            <p style="font-size: 13px; color: gray;">Press "/" to focus, Enter to execute</p> 
+        </div>
+    </div>
+  </main>
+  
+
+  <script>
+    const display = document.getElementById("timer-display");
+    const tableBody = document.querySelector("#record-table tbody");
+    const commandInput = document.getElementById("command-input");
+  
+    let holding = false;
+    let holdTimeout = null;
+    let readyToStart = false;
+    let timerRunning = false;
+    let startTime = null;
+    let timerInterval = null;
+  
+    let times = [];
+    let bestTime = Infinity;
+    let bestAo5 = Infinity;
+    let bestAo12 = Infinity;
+    let bestAo100 = Infinity;
+  
+    // 計時器邏輯
+    document.addEventListener("keydown", (e) => {
+      if (timerRunning) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        display.style.color = "white";
+        const elapsed = ((performance.now() - startTime) / 1000).toFixed(3);
+        addRecord(parseFloat(elapsed));
+        updateScramble();
+
+        return;
+      }
+  
+      if (e.code === "Space" && !holding) {
+        holding = true;
+        display.style.color = "red";
+        holdTimeout = setTimeout(() => {
+          if (holding) {
+            display.style.color = "green";
+            readyToStart = true;
+          }
+        }, 300);
+      }
+    });
+  
+    document.addEventListener("keyup", (e) => {
+      if (e.code === "Space" && holding) {
+        clearTimeout(holdTimeout);
+        if (readyToStart) {
+          display.style.color = "white";
+          display.textContent = "0.000";
+          startTime = performance.now();
+          timerInterval = setInterval(() => {
+            const elapsed = (performance.now() - startTime) / 1000;
+            display.textContent = elapsed.toFixed(3);
+          }, 10);
+          timerRunning = true;
+        } else {
+          display.style.color = "white";
+        }
+        holding = false;
+        readyToStart = false;
+      }
+    });
+  
+    // ESC 返回首頁
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") window.location.href = "index.html";
+    });
+  
+    // "/" 聚焦輸入
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "/" && document.activeElement !== commandInput) {
+        e.preventDefault();
+        commandInput.focus();
+      }
+    });
+    // Enter 執行指令
+    commandInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleCommand();
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+      const scramble = generateScramble();
+      document.getElementById("twisty").alg = scramble;
+    });
+
+    // 加入紀錄
+    function addRecord(time) {
+      const record = { time, penalty: false, dnf: false };
+      times.unshift(record);
+      saveRecords();
+      reloadTable();
+    }
+  
+    // 儲存/載入
+    function saveRecords() {
+      localStorage.setItem("cubeRecords", JSON.stringify(times));
+    }
+  
+    function loadRecords() {
+      const saved = localStorage.getItem("cubeRecords");
+      if (saved) times = JSON.parse(saved);
+      reloadTable();
+    }
+  
+    // 重整表格
+    function reloadTable() {
+        tableBody.innerHTML = "";
+
+        bestTime = findBestTime(times);
+        bestAo5 = findBestAO(times, 5);
+        bestAo12 = findBestAO(times, 12);
+        bestAo100 = findBestAO(times, 100);
+
+        for (let i = 0; i < times.length; i++) {
+            const displayIndex = times.length - i; // ✅ 倒數編號
+            renderRecord(displayIndex, i, times[i]);
+        }
+
+        const padding = 12 - times.length;
+        for (let j = 0; j < padding; j++) {
+            const row = document.createElement("tr");
+            for (let k = 0; k < 5; k++) row.appendChild(document.createElement("td"));
+            tableBody.appendChild(row);
+        }
+    }
+    function findBestTime(arr) {
+        return Math.min(
+            ...arr
+            .filter(r => !r.dnf)
+            .map(r => r.time + (r.penalty ? 2 : 0))
+        );
+    }
+
+    function findBestAO(arr, n) {
+        let best = Infinity;
+        for (let i = 0; i <= arr.length - n; i++) {
+            const slice = arr.slice(i, i + n);
+            const avg = calcAveragePartial(slice, n);
+            if (avg !== "") best = Math.min(best, parseFloat(avg));
+        }
+        return best;
+    }
+
+  
+    function renderRecord(displayIndex, i, record) {
+        const row = document.createElement("tr");
+
+        // 編號欄
+        const indexCell = document.createElement("td");
+        indexCell.textContent = displayIndex;
+
+        // 時間欄
+        const timeCell = document.createElement("td");
+        let timeValue = record.time + (record.penalty ? 2 : 0);
+        let displayTime = record.dnf ? "DNF" : timeValue.toFixed(3);
+        timeCell.textContent = displayTime;
+
+        // 當時是否是 PB（只比之前的記錄）
+        let isPB = true;
+        for (let j = i + 1; j < times.length; j++) {
+            const prev = times[j];
+            if (prev.dnf) continue;
+            const prevValue = prev.time + (prev.penalty ? 2 : 0);
+            if (prevValue <= timeValue) {
+            isPB = false;
+            break;
+            }
+        }
+
+        // 上色邏輯
+        if (record.dnf) {
+            timeCell.style.color = "red";
+        } else if (isPB) {
+            timeCell.style.color = "limegreen";
+        } else if (record.penalty) {
+            timeCell.style.color = "lightblue";
+        }
+
+        // 平均欄位計算
+        const ao5 = calcAveragePartial(times.slice(i, i + 5), 5);
+        const ao12 = calcAveragePartial(times.slice(i, i + 12), 12);
+        const ao100 = calcAveragePartial(times.slice(i, i + 100), 100);
+
+        const ao5Cell = document.createElement("td");
+        const ao12Cell = document.createElement("td");
+        const ao100Cell = document.createElement("td");
+
+        ao5Cell.textContent = ao5;
+        ao12Cell.textContent = ao12;
+        ao100Cell.textContent = ao100;
+
+        // 檢查平均是否為當時 PB
+        if (isAveragePB(ao5, i, 5)) ao5Cell.style.color = "limegreen";
+        if (isAveragePB(ao12, i, 12)) ao12Cell.style.color = "limegreen";
+        if (isAveragePB(ao100, i, 100)) ao100Cell.style.color = "limegreen";
+
+        // 加入行
+        row.appendChild(indexCell);
+        row.appendChild(timeCell);
+        row.appendChild(ao5Cell);
+        row.appendChild(ao12Cell);
+        row.appendChild(ao100Cell);
+        tableBody.appendChild(row);
+    }
+    function isAveragePB(currentValue, i, n) {
+        if (!currentValue) return false;
+        const current = parseFloat(currentValue);
+        for (let j = i + 1; j <= times.length - n; j++) {
+            const slice = times.slice(j, j + n);
+            const avg = calcAveragePartial(slice, n);
+            if (avg && parseFloat(avg) <= current) return false;
+        }
+        return true;
+    }
+
+    function calcAveragePartial(arr, n) {
+      const valid = arr.filter(r => !r.dnf).map(r => r.time + (r.penalty ? 2 : 0));
+      if (valid.length < n) return "";
+      const sorted = valid.slice().sort((a, b) => a - b);
+      sorted.shift(); sorted.pop();
+      const sum = sorted.reduce((a, b) => a + b, 0);
+      return (sum / sorted.length).toFixed(3);
+    }
+  
+    function handleCommand() {
+        const input = document.getElementById("command-input");
+        const value = input.value.trim().toLowerCase();
+        input.value = "";
+        input.blur();
+
+        if (!value) return;
+
+        const action = value.charAt(0);
+        const numberPart = value.slice(1);
+        let idx;
+
+        if (numberPart === "") {
+            // 沒有指定數字，預設操作最新的資料（index 0）
+            idx = 0;
+        } else {
+            const targetIndex = parseInt(numberPart);
+            if (isNaN(targetIndex) || targetIndex < 1 || targetIndex > times.length) {
+            alert("Invalid command or record index.");
+            return;
+            }
+            // ✅ 因為畫面是倒序，所以第 N 筆對應 times.length - N
+            idx = times.length - targetIndex;
+        }
+
+        const record = times[idx];
+
+        if (action === "d") {
+            times.splice(idx, 1);
+        } else if (action === "+") {
+            if (!record.dnf) record.penalty = true;
+        } else if (action === "n") {
+            record.dnf = true;
+            record.penalty = false;
+        } else if (action === "r") {
+            record.dnf = false;
+            record.penalty = false;
+        } else {
+            alert("Unknown command.");
+            return;
+        }
+
+        saveRecords();
+        reloadTable();
+    }
+
+    function generateScramble() {
+        const moves = ["R", "L", "U", "D", "F", "B"];
+        const modifiers = ["", "'", "2"];
+        let scramble = [];
+        let prev = "";
+
+        while (scramble.length < 20) {
+            let move = moves[Math.floor(Math.random() * moves.length)];
+            if (move === prev) continue; // 避免連續相同軸
+            prev = move;
+            let mod = modifiers[Math.floor(Math.random() * modifiers.length)];
+            scramble.push(move + mod);
+        }
+
+        return scramble.join(" ");
+    }
+
+    function updateScramble() {
+        const scramble =generateScramble();
+        document.getElementById("scramble").textContent = scramble;
+        document.getElementById("twisty").alg = scramble; // 更新 Twisty Player 的算法
+    }
+
+    window.addEventListener("load", () => {
+        loadRecords();
+        updateScramble();  // ✅ 顯示第一個 scramble
+    });
+  </script>
+  
+</body>
+</html>

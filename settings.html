@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Settings</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: sans-serif;
+      padding: 40px;
+      text-align: center;
+    }
+
+    button, input[type="file"] {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    .section {
+      margin-top: 40px;
+    }
+  </style>
+  <div id="storage-usage" style="position: fixed; bottom: 20px; right: 20px; font-size: 14px; opacity: 0.8;">
+    Storage Used: Calculating...
+  </div>
+
+</head>
+<a href="index.html" style="position: absolute; top: 20px; left: 20px; color: white; font-size: 16px; text-decoration: none;">← Back to Home</a>
+
+<body>
+
+  <h1>Settings</h1>
+
+  <div class="section">
+    <h2>Export Records</h2>
+    <button onclick="exportToTxt()">Export to .txt</button>
+  </div>
+
+  <div class="section">
+    <h2>Import Records</h2>
+    <input type="file" accept=".txt" onchange="importFromTxt(this)">
+  </div>
+
+  <div class="section">
+    <h2>Clear All Records</h2>
+    <button onclick="clearAllRecords()">Clear Records</button>
+  </div>
+  <div class="section">
+    <h2>Trainer Options</h2>
+    <label style="font-size: 16px;">
+      <input type="checkbox" id="show-solution-checkbox">
+      Show solution by default in trainer
+    </label>
+  </div>
+  <div class="section">
+    <h2>Trainer Random U Options</h2>
+    <label style="font-size: 16px; display: block;">
+      <input type="checkbox" id="prepend-u-checkbox">
+      Random Orientation
+    </label>
+    <label style="font-size: 16px; display: block;">
+      <input type="checkbox" id="append-u-checkbox">
+      Random color
+    </label>
+  </div>
+
+  <script>
+    //H to go back to index.html
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            window.location.href = "index.html";
+        }
+    });
+// 載入時同步 checkbox 狀態
+    window.addEventListener("DOMContentLoaded", () => {
+      const checkbox = document.getElementById("show-solution-checkbox");
+      const value = localStorage.getItem("showSolutionByDefault") === "true";
+      checkbox.checked = value;
+
+      checkbox.addEventListener("change", () => {
+        localStorage.setItem("showSolutionByDefault", checkbox.checked);
+      });
+
+      const prependCheckbox = document.getElementById("prepend-u-checkbox");
+      const prependValue = localStorage.getItem("trainerPrependRandomU") === "true";
+      prependCheckbox.checked = prependValue;
+      prependCheckbox.addEventListener("change", () => {
+        localStorage.setItem("trainerPrependRandomU", prependCheckbox.checked);
+      });
+
+      const appendCheckbox = document.getElementById("append-u-checkbox");
+      const appendValue = localStorage.getItem("trainerAppendRandomU") === "true";
+      appendCheckbox.checked = appendValue;
+      appendCheckbox.addEventListener("change", () => {
+        localStorage.setItem("trainerAppendRandomU", appendCheckbox.checked);
+      });
+
+
+
+      estimateLocalStorageUsage();
+
+    });
+
+    
+    
+    function exportToTxt() {
+      const raw = localStorage.getItem("cubeRecords");
+      if (!raw) {
+        alert("No records to export.");
+        return;
+      }
+
+      const times = JSON.parse(raw);
+      let lines = [];
+      lines.push("#\tTime(s)\tao5\tao12\tao100");
+
+      function calcAvg(arr, n) {
+        if (arr.length < n) return "";
+        const recent = arr.slice(-n).slice().sort((a, b) => a - b);
+        recent.shift(); recent.pop();
+        return (recent.reduce((a, b) => a + b, 0) / recent.length).toFixed(3);
+      }
+
+      for (let i = 0; i < times.length; i++) {
+        const index = i + 1;
+        const t = times[i].toFixed(3);
+        const slice = times.slice(0, index);
+        lines.push(`${index}\t${t}\t${calcAvg(slice,5)}\t${calcAvg(slice,12)}\t${calcAvg(slice,100)}`);
+      }
+
+      const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cube_records.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importFromTxt(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const lines = e.target.result.split("\n");
+        const newTimes = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue;
+          const parts = line.split("\t");
+          const time = parseFloat(parts[1]);
+          if (!isNaN(time)) newTimes.push(time);
+        }
+
+        if (newTimes.length === 0) {
+          alert("No valid times found in file.");
+          return;
+        }
+
+        localStorage.setItem("cubeRecords", JSON.stringify(newTimes));
+        alert("Records imported! Reload main page to see changes.");
+      };
+
+      reader.readAsText(file);
+    }
+
+    function clearAllRecords() {
+      if (confirm("Are you sure you want to delete all records?")) {
+        localStorage.removeItem("cubeRecords");
+      }
+    }
+    function estimateLocalStorageUsage() {
+      let total = 0;
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        total += key.length + value.length;
+      }
+
+      // 假設每個字元 ~2 bytes (UTF-16)
+      const bytes = total * 2;
+      const kb = (bytes / 1024).toFixed(2);
+
+      const display = document.getElementById("storage-usage");
+      display.textContent = `Storage Used: ~${kb} KB`;
+    }
+
+  </script>
+
+</body>
+</html>

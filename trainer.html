@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TRAINER</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: sans-serif;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    a.back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .cube-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+      gap: 20px;
+    }
+    .mini-cube {
+      position: fixed;
+      right: 40px;
+      bottom: 40px;
+      width: 150px;
+      height: 150px;
+      z-index: 10;
+    }
+
+
+    .progress-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .solution-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #00e0ff;
+      transition: width 0.3s;
+    }
+    .solution-buttons {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      width: 180%;
+      max-width: 600px;
+      margin-top: 0px;
+    }
+
+    .solution-buttons button {
+      flex: 0 0 auto;
+      padding: 8px 16px;
+      font-size: 12px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+
+    .solution-text {
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #ccc;
+      text-align: center;
+      max-width: 150%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      height: 36px;       /* 固定高度 */
+      line-height: 36px;  /* 讓文字垂直置中 */
+    }
+
+
+    .main-cube-with-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .main-cube-with-buttons button {
+      padding: 6px 12px;
+      font-size: 14px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+
+  </style>
+</head>
+<body>
+
+  <a class="back-link" href="index.html">← Back to Home</a>
+  <a class="back-link" style="top: 50px;" href="tutorials_coll.html">→ Go to Tutorials (COLL)</a>
+
+  <h1>TRAINER</h1>
+  <button id="reset-button" style="
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 6px 12px;
+    font-size: 14px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  ">Reset</button>
+  <div class="progress-container">
+    <div id="progress-text" class="solution-text"></div>
+    <div class="progress-bar-wrapper">
+      <div id="progress-bar"></div>
+    </div>
+  </div>
+
+  <div class="cube-container">
+    <div class="main-cube-with-buttons">
+      <button id="prev-cube-btn"> ← </button>
+      
+      <twisty-player
+        id="main-cube"
+        style="width: 300px; height: 300px;"
+        puzzle="3x3x3"
+        background="none"
+        control-panel="none"
+        hint-facelets="none"
+        experimental-setup-anchor="end"
+        experimental-setup-alg="x2"
+        visualization="experimental-2D-LL"
+      ></twisty-player>
+      
+      <button id="next-cube-btn"> → </button>
+    </div>
+
+    <div class="solution-wrapper">
+      <div class="solution-text" id="solution"></div>
+      <div class="solution-buttons">
+        <button id="hide-all-btn"> << </button>
+        <button id="hide-step-btn"> < </button>
+        <button id="show-step-btn"> > </button>
+        <button id="show-all-btn"> >></button>
+      </div>
+    </div>
+
+    <twisty-player
+      id="mini-cube"
+      class="mini-cube"
+      puzzle="3x3x3"
+      background="none"
+      control-panel="none"
+      hint-facelets="none"
+    ></twisty-player>
+  </div>
+  
+  <div id="debug" style="white-space: pre; font-size: 12px; color: #888; margin-top: 30px;"></div>
+
+  <script type="module">
+    import 'https://cdn.cubing.net/v0/js/cubing/twisty';
+    import { collAlgorithms, pllAlgorithms } from './algorithms.js';
+
+    let solutionList = []; // 包含 { display, alg }
+    let currentIndex = 0;
+    let miniCubeHistAlg = "x2";
+    const historyStack = [];
+    let revealedCount = 0;
+    let currentSteps = [];
+    let randomizedSolutions = [];
+
+
+    const solutionEl = document.getElementById("solution");
+    const mainCube = document.getElementById("main-cube");
+    const miniCube = document.getElementById("mini-cube");
+
+    function generateSolutions() {
+      const collRaw = localStorage.getItem("collSelected");
+      const pllRaw = localStorage.getItem("pllSelected");
+
+      const collSelected = collRaw ? JSON.parse(collRaw) : [];
+      const pllSelected = pllRaw ? JSON.parse(pllRaw) : [];
+
+      // 合併所有選到的名字
+      const allSelected = new Set([...collSelected, ...pllSelected]);
+
+      // 從所有的算法清單裡面找
+      const allAlgorithms = [...collAlgorithms, ...pllAlgorithms];
+      const filtered = allAlgorithms.filter(a => allSelected.has(a.name));
+
+      if (filtered.length === 0) {
+        alert("Please select at least one case in Tutorials first.");
+        return;
+      }
+
+      solutionList = filtered.map(picked => ({
+        display: picked.display,
+        alg: picked.alg
+      }));
+
+      // 隨機打亂
+      for (let i = solutionList.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [solutionList[i], solutionList[j]] = [solutionList[j], solutionList[i]];
+      }
+    }
+    function applyCurrentSolution() {
+      const current = randomizedSolutions[currentIndex];
+      if (!current) return;
+
+      mainCube.alg = current.mainAlg;
+
+
+      currentSteps = current.display.trim().split(/\s+/);
+      revealedCount = 0;
+
+      const showByDefault = localStorage.getItem("showSolutionByDefault") === "true";
+      solutionEl.textContent = showByDefault ? current.display : "";
+
+      const progressText = document.getElementById("progress-text");
+      progressText.textContent = `Case ${currentIndex + 1} of ${randomizedSolutions.length}`;
+
+      const progressBar = document.getElementById("progress-bar");
+      const percent = ((currentIndex + 1) / randomizedSolutions.length) * 100;
+      progressBar.style.width = `${percent}%`;
+    }
+
+
+    
+    function showNextStep() {
+      if (revealedCount < currentSteps.length) {
+        revealedCount++;
+        solutionEl.textContent = currentSteps.slice(0, revealedCount).join(" ");
+      }
+    }
+
+    function hideStep() {
+      if (revealedCount > 0) {
+        revealedCount--;
+        solutionEl.textContent = currentSteps.slice(0, revealedCount).join(" ");
+      }
+    }
+
+    function showAllSteps() {
+      solutionEl.textContent = solutionList[currentIndex].display;
+    }
+
+    function hideAllSteps() {
+      solutionEl.textContent = "";
+    }
+
+    function goPrevious() {
+      const prev = historyStack.pop();
+      if (!prev) return;
+
+      currentIndex = prev.index;
+      miniCubeHistAlg = prev.miniAlg;
+      miniCube.alg = miniCubeHistAlg;
+      applyCurrentSolution();
+    }
+
+    function goNext() {
+      const current = randomizedSolutions[currentIndex];
+      if (!current) return;
+
+      // 儲存目前狀態（包含即將要累加的）
+      historyStack.push({
+        index: currentIndex,
+        miniAlg: miniCubeHistAlg,
+      });
+
+      // 更新 miniCube 狀態：加入這一步的公式
+      miniCubeHistAlg += " " + current.miniAlg;
+      miniCube.alg = miniCubeHistAlg;
+
+      // 下一條（循環）
+      currentIndex = (currentIndex + 1) % randomizedSolutions.length;
+      applyCurrentSolution();
+    }
+
+
+    function resetTrainer() {
+      miniCubeHistAlg = "x2";
+      miniCube.alg = miniCubeHistAlg;
+      historyStack.length = 0;
+      generateSolutions();
+
+      // 在這裡就決定好所有題目
+      randomizedSolutions = solutionList.map(item => {
+        let mainAlg = item.alg;
+        let miniAlg = item.alg;
+
+        const prependRandom = localStorage.getItem("trainerPrependRandomU") === "true";
+        const appendRandom = localStorage.getItem("trainerAppendRandomU") === "true";
+
+        function randomU() {
+          const options = ["U", "U'", "U2"];
+          return options[Math.floor(Math.random() * options.length)];
+        }
+
+        if (prependRandom) {
+          const randMove = randomU();
+          mainAlg = `${randMove} ${mainAlg}`;
+          miniAlg = `${randMove} ${miniAlg}`;
+        }
+
+        if (appendRandom) {
+          mainAlg = `${mainAlg} ${randomU()}`;
+        }
+
+        return {
+          display: item.display,
+          mainAlg,
+          miniAlg
+        };
+      });
+
+      currentIndex = 0;
+      applyCurrentSolution();
+    }
+    document.getElementById("show-step-btn").addEventListener("click", showNextStep);
+    document.getElementById("hide-step-btn").addEventListener("click", hideStep);
+    document.getElementById("show-all-btn").addEventListener("click", showAllSteps);
+    document.getElementById("hide-all-btn").addEventListener("click", hideAllSteps);
+    document.getElementById("prev-cube-btn").addEventListener("click", goPrevious);
+    document.getElementById("next-cube-btn").addEventListener("click", goNext);
+
+
+    function updateDebug() {
+      const debugEl = document.getElementById("debug");
+      const current = solutionList[currentIndex];
+      debugEl.textContent = `
+  currentIndex:         ${currentIndex + 1} / ${solutionList.length}
+  currentDisplay:       ${current?.display || ""}
+  currentAlg:           ${current?.alg || ""}
+  miniCubeHistAlg:      ${miniCubeHistAlg}
+  historyStack.length:  ${historyStack.length}
+      `.trim();
+    }
+
+    document.getElementById("reset-button").addEventListener("click", (e) => {
+      e.preventDefault();
+      resetTrainer();
+      e.currentTarget.blur();
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (document.activeElement) document.activeElement.blur();
+      if (e.key === "ArrowRight" && e.ctrlKey) {
+        e.preventDefault();
+        showAllSteps();
+      } else if (e.key === "ArrowLeft" && e.ctrlKey) {
+        e.preventDefault();
+        hideAllSteps();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        showNextStep();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        hideStep();
+      }
+
+      if (e.key === "Enter" && e.shiftKey) {
+        e.preventDefault();
+        goPrevious();
+        return;
+      }
+
+      if (e.key === "Enter") {
+        e.preventDefault();
+        goNext();
+        return;
+      }
+
+      if (e.key.toLowerCase() === "r") {
+        e.preventDefault();
+        resetTrainer();
+      } else if (e.key === "Escape") {
+        window.location.href = "index.html";
+      }
+    }, { capture: true });
+
+    // 初始化
+    mainCube.alg = "";
+    miniCube.alg = miniCubeHistAlg;
+    solutionEl.textContent = "";
+    resetTrainer();
+  </script>
+
+
+</body>
+</html>
