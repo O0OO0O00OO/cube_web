@@ -44,7 +44,7 @@ export const collAlgorithms = [
   { group: "U", name: "U6", img: "./images/coll_u6.png", alg: "R2 D' R U R' D R U R U' R' U' R", display: "11 D' 451 D 4542124" },
 
   { group: "T", name: "T1", img: "./images/coll_t1.png", alg: "R U2 R' U' R U' R2 U2 R U R' U R", display: "4221 2421 1224 5154" },
-  { group: "T", name: "T2", img: "./images/coll_t2.png", alg: "R' U R U2 R' L' U R U' L", display: "15422 18 5427" },
+  { group: "T", name: "T2", img: "./images/coll_t2.png", alg: "R U' R' U2 L R U' R' U L' ", display: "42155 7 4215 8" },
   { group: "T", name: "T3", img: "./images/coll_t3.png", alg: "r U R' U' r' F R F'", display: "(4)512 (1)643" },
   { group: "T", name: "T4", img: "./images/coll_t4.png", alg: "l' U' L U l F' L' F", display: "(8)275 (7)386" },
   { group: "T", name: "T5", img: "./images/coll_t5.png", alg: "F R U R' U' R U' R' U' R U R' F'", display: "6 4512 4212 4513" },
