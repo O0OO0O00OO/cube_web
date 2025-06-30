@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>oll Tutorials</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: sans-serif;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .top-controls {
+      display: flex;
+      justify-content: flex-end;
+      max-width: 800px;
+      margin: 0 auto 30px;
+    }
+
+    .oll-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .oll-group {
+      margin-bottom: 50px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .oll-group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 5px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .oll-group h2 {
+      color: #00e0ff;
+      margin: 0;
+    }
+
+    .oll-group-content {
+      transition: all 0.3s ease;
+    }
+
+    .oll-case {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #222;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .oll-case img {
+      width: 80px;
+      max-width: 100%;
+      flex-shrink: 0;
+    }
+
+    .oll-text {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .oll-text p {
+      margin: 6px 0;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.5);
+      cursor: pointer;
+    }
+
+    button {
+      padding: 6px 12px;
+      font-size: 14px;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    a.back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <a class="back-link" href="index.html">← Back to Home</a>
+  <a class="back-link" style="top: 50px;" href="trainer.html">→ Go to Trainer</a>
+
+  <h1>oll Tutorials</h1>
+
+  <div class="top-controls">
+    <button id="toggle-all">Select All</button>
+  </div>
+
+  <div class="oll-container" id="oll-container"></div>
+
+  <script>
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+
+  <script type="module">
+    import { ollAlgorithms } from './algorithms.js';
+
+    const container = document.getElementById('oll-container');
+
+    function getSelected() {
+      const raw = localStorage.getItem('ollSelected');
+      return raw ? JSON.parse(raw) : [];
+    }
+
+    function saveSelected(selected) {
+      localStorage.setItem('ollSelected', JSON.stringify(selected));
+    }
+
+    const grouped = {};
+    for (const algo of ollAlgorithms) {
+      if (!grouped[algo.group]) grouped[algo.group] = [];
+      grouped[algo.group].push(algo);
+    }
+
+    const checkboxes = {}; // name => checkbox element
+
+    // Global toggle state
+    let globalAllSelected = false;
+
+    document.getElementById('toggle-all').addEventListener('click', () => {
+      const allNames = Object.keys(checkboxes);
+      globalAllSelected = !globalAllSelected;
+
+      allNames.forEach(name => {
+        checkboxes[name].checked = globalAllSelected;
+      });
+
+      if (globalAllSelected) {
+        saveSelected(allNames);
+        document.getElementById('toggle-all').textContent = 'Deselect All';
+      } else {
+        saveSelected([]);
+        document.getElementById('toggle-all').textContent = 'Select All';
+      }
+    });
+
+    for (const groupName in grouped) {
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'oll-group';
+
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'oll-group-header';
+
+      const heading = document.createElement('h2');
+      heading.textContent = `${groupName} Group`;
+
+      const toggleGroupBtn = document.createElement('button');
+      toggleGroupBtn.textContent = 'Select All in Group';
+
+      let groupSelected = false;
+
+      toggleGroupBtn.addEventListener('click', () => {
+        const selected = getSelected();
+        groupSelected = !groupSelected;
+
+        for (const item of grouped[groupName]) {
+          const name = item.name;
+          const cb = checkboxes[name];
+          cb.checked = groupSelected;
+
+          if (groupSelected && !selected.includes(name)) {
+            selected.push(name);
+          } else if (!groupSelected) {
+            const idx = selected.indexOf(name);
+            if (idx !== -1) selected.splice(idx, 1);
+          }
+        }
+
+        toggleGroupBtn.textContent = groupSelected ? 'Deselect Group' : 'Select All in Group';
+        saveSelected(selected);
+      });
+
+      // ---------- NEW Collapse Button ----------
+      const collapseBtn = document.createElement('button');
+      collapseBtn.textContent = 'Collapse';
+
+      const groupContentDiv = document.createElement('div');
+      groupContentDiv.className = 'oll-group-content';
+
+      let collapsed = false;
+      collapseBtn.addEventListener('click', () => {
+        collapsed = !collapsed;
+        groupContentDiv.style.display = collapsed ? 'none' : '';
+        collapseBtn.textContent = collapsed ? 'Expand' : 'Collapse';
+      });
+      // ------------------------------------------
+
+      headerDiv.appendChild(heading);
+      headerDiv.appendChild(toggleGroupBtn);
+      headerDiv.appendChild(collapseBtn);
+      groupDiv.appendChild(headerDiv);
+
+      for (const item of grouped[groupName]) {
+        const caseDiv = document.createElement('div');
+        caseDiv.className = 'oll-case';
+
+        const leftPart = document.createElement('div');
+        leftPart.style.display = 'flex';
+        leftPart.style.alignItems = 'center';
+        leftPart.style.gap = '15px';
+
+        const label = document.createElement('strong');
+        label.textContent = `${item.name}:`;
+        leftPart.appendChild(label);
+
+        const image = document.createElement('img');
+        image.src = item.img;
+        leftPart.appendChild(image);
+
+        const textWrap = document.createElement('div');
+        textWrap.className = 'oll-text';
+        const p = document.createElement('p');
+        p.textContent = item.display;
+        textWrap.appendChild(p);
+        leftPart.appendChild(textWrap);
+
+        caseDiv.appendChild(leftPart);
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = getSelected().includes(item.name);
+        checkboxes[item.name] = checkbox;
+
+        checkbox.addEventListener('change', () => {
+          const selected = getSelected();
+          if (checkbox.checked) {
+            if (!selected.includes(item.name)) selected.push(item.name);
+          } else {
+            const idx = selected.indexOf(item.name);
+            if (idx !== -1) selected.splice(idx, 1);
+          }
+          saveSelected(selected);
+        });
+
+        caseDiv.appendChild(checkbox);
+        groupContentDiv.appendChild(caseDiv);
+      }
+
+      groupDiv.appendChild(groupContentDiv);
+      container.appendChild(groupDiv);
+    }
+  </script>
+
+</body>
+</html>

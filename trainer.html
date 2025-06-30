@@ -117,7 +117,9 @@
 <body>
 
   <a class="back-link" href="index.html">← Back to Home</a>
-  <a class="back-link" style="top: 50px;" href="tutorials_coll.html">→ Go to Tutorials (COLL)</a>
+  <a class="back-link" style="top: 50px;" href="tutorials_oll.html">→ Go to Tutorials (OLL)</a>
+  <a class="back-link" style="top: 80px;" href="tutorials_pll.html">→ Go to Tutorials (PLL)</a>
+  <a class="back-link" style="top: 110px;" href="tutorials_coll.html">→ Go to Tutorials (COLL)</a>
 
   <h1>TRAINER</h1>
   <button id="reset-button" style="
@@ -182,7 +184,7 @@
 
   <script type="module">
     import 'https://cdn.cubing.net/v0/js/cubing/twisty';
-    import { collAlgorithms, pllAlgorithms } from './algorithms.js';
+    import { collAlgorithms, pllAlgorithms, ollAlgorithms} from './algorithms.js';
 
     let solutionList = []; // 包含 { display, alg }
     let currentIndex = 0;
@@ -200,15 +202,17 @@
     function generateSolutions() {
       const collRaw = localStorage.getItem("collSelected");
       const pllRaw = localStorage.getItem("pllSelected");
+      const ollRaw = localStorage.getItem("ollSelected");
 
       const collSelected = collRaw ? JSON.parse(collRaw) : [];
       const pllSelected = pllRaw ? JSON.parse(pllRaw) : [];
+      const ollSelected = ollRaw ? JSON.parse(ollRaw) : [];
 
       // 合併所有選到的名字
-      const allSelected = new Set([...collSelected, ...pllSelected]);
+      const allSelected = new Set([...collSelected, ...pllSelected, ...ollSelected]);
 
       // 從所有的算法清單裡面找
-      const allAlgorithms = [...collAlgorithms, ...pllAlgorithms];
+      const allAlgorithms = [...collAlgorithms, ...pllAlgorithms, ...ollAlgorithms];
       const filtered = allAlgorithms.filter(a => allSelected.has(a.name));
 
       if (filtered.length === 0) {

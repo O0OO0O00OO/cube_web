@@ -30,6 +30,9 @@
 
     .pll-group {
       margin-bottom: 50px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 10px;
     }
 
     .pll-group-header {
@@ -39,11 +42,17 @@
       margin-bottom: 10px;
       border-bottom: 1px solid #444;
       padding-bottom: 5px;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .pll-group h2 {
       color: #00e0ff;
       margin: 0;
+    }
+
+    .pll-group-content {
+      transition: all 0.3s ease;
     }
 
     .pll-case {
@@ -101,6 +110,8 @@
 <body>
 
   <a class="back-link" href="index.html">← Back to Home</a>
+  <a class="back-link" style="top: 50px;" href="trainer.html">→ Go to Trainer</a>
+
   <h1>PLL Tutorials</h1>
 
   <div class="top-controls">
@@ -195,8 +206,24 @@
         saveSelected(selected);
       });
 
+      // ---------- NEW Collapse Button ----------
+      const collapseBtn = document.createElement('button');
+      collapseBtn.textContent = 'Collapse';
+
+      const groupContentDiv = document.createElement('div');
+      groupContentDiv.className = 'pll-group-content';
+
+      let collapsed = false;
+      collapseBtn.addEventListener('click', () => {
+        collapsed = !collapsed;
+        groupContentDiv.style.display = collapsed ? 'none' : '';
+        collapseBtn.textContent = collapsed ? 'Expand' : 'Collapse';
+      });
+      // ------------------------------------------
+
       headerDiv.appendChild(heading);
       headerDiv.appendChild(toggleGroupBtn);
+      headerDiv.appendChild(collapseBtn);
       groupDiv.appendChild(headerDiv);
 
       for (const item of grouped[groupName]) {
@@ -242,9 +269,10 @@
         });
 
         caseDiv.appendChild(checkbox);
-        groupDiv.appendChild(caseDiv);
+        groupContentDiv.appendChild(caseDiv);
       }
 
+      groupDiv.appendChild(groupContentDiv);
       container.appendChild(groupDiv);
     }
   </script>
