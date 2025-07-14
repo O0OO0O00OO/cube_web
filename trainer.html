@@ -1,97 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>TRAINER</title>
   <style>
     body {
       background-color: black;
       color: white;
       font-family: sans-serif;
-      padding: 40px;
+      margin: 0;
+      padding: 20px;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
+
+    .trainer-layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      margin-top: 20px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
     }
+
+    .trainer-left,
+    .trainer-center,
+    .trainer-right {
+      background-color: #111;
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 8px;
+    }
+
+    .trainer-left {
+      flex: 0 0 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .trainer-center {
+      flex: 1;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .trainer-right {
+      flex: 0 0 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
     a.back-link {
-      position: absolute;
-      top: 20px;
-      left: 20px;
       color: white;
       text-decoration: none;
       font-size: 16px;
     }
-    .cube-container {
+
+    #formula-set-controls {
+      background-color: #111;
+      padding: 10px;
+      border: 1px solid #555;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
-      gap: 20px;
-    }
-    .mini-cube {
-      position: fixed;
-      right: 40px;
-      bottom: 40px;
-      width: 150px;
-      height: 150px;
-      z-index: 10;
+      gap: 10px;
     }
 
+    h1 {
+      text-align: center;
+      margin: 0;
+      font-size: 28px;
+    }
 
     .progress-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 20px;
+      gap: 10px;
     }
 
-    .solution-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
+    .progress-bar-wrapper {
+      width: 100%;
+      height: 10px;
+      background-color: #333;
+      border-radius: 5px;
+      overflow: hidden;
     }
+
     #progress-bar {
       height: 100%;
       width: 0%;
       background: #00e0ff;
       transition: width 0.3s;
     }
-    .solution-buttons {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: nowrap;
-      width: 180%;
-      max-width: 600px;
-      margin-top: 0px;
-    }
-
-    .solution-buttons button {
-      flex: 0 0 auto;
-      padding: 8px 16px;
-      font-size: 12px;
-      background-color: #333;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
 
     .solution-text {
-      margin-bottom: 10px;
-      font-size: 18px;
+      margin: 0;
+      font-size: 16px;
       color: #ccc;
       text-align: center;
-      max-width: 150%;
+      max-width: 90%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      height: 36px;       /* 固定高度 */
-      line-height: 36px;  /* 讓文字垂直置中 */
+      height: 36px;
+      line-height: 36px;
     }
 
+    .cube-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
 
     .main-cube-with-buttons {
       display: flex;
@@ -101,7 +125,10 @@
       flex-wrap: wrap;
     }
 
-    .main-cube-with-buttons button {
+    .main-cube-with-buttons button,
+    .solution-buttons button,
+    #reset-button,
+    #formula-set-controls button {
       padding: 6px 12px;
       font-size: 14px;
       background-color: #333;
@@ -111,318 +138,658 @@
       cursor: pointer;
     }
 
+    .solution-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .solution-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mini-cube {
+      width: 150px;
+      height: 150px;
+      position: static;
+    }
+
+    #reset-button {
+      width: 100%;
+    }
+    .trainer-random-u-options {
+      border-top: 1px solid #444;
+      padding-top: 10px;
+      margin-top: 10px;
+    }
 
   </style>
 </head>
 <body>
 
-  <a class="back-link" href="index.html">← Back to Home</a>
-  <a class="back-link" style="top: 50px;" href="tutorials_oll.html">→ Go to Tutorials (OLL)</a>
-  <a class="back-link" style="top: 80px;" href="tutorials_pll.html">→ Go to Tutorials (PLL)</a>
-  <a class="back-link" style="top: 110px;" href="tutorials_coll.html">→ Go to Tutorials (COLL)</a>
-  <a class="back-link" style="top: 140px;" href="tutorials_zbll.html">→ Go to Tutorials (ZBLL)</a>
+  <div class="trainer-layout">
+
+    <!-- 左欄 -->
+    <div class="trainer-left">
+      <a class="back-link" href="index.html">← Back to Home</a>
+      <a class="back-link" href="tutorials_oll.html">→ Go to Tutorials (OLL)</a>
+      <a class="back-link" href="tutorials_pll.html">→ Go to Tutorials (PLL)</a>
+      <a class="back-link" href="tutorials_coll.html">→ Go to Tutorials (COLL)</a>
+      <a class="back-link" href="tutorials_zbll.html">→ Go to Tutorials (ZBLL)</a>
+
+      <div id="formula-set-controls">
+        <label for="set-selector">Formula Set:</label>
+        <select id="set-selector"></select>
+        <button id="add-set-button">+ Add</button>
+        <button id="delete-set-button">- Delete</button>
+        <button id="rename-set-button">✎ Rename</button>
+        <button id="toggle-edit-panel-button">✎ Edit Set Contents</button>
+
+        <div class="trainer-random-u-options">
+          <h3>Trainer Random U Options</h3>
+          <label style="font-size: 14px; display: block;">
+            <input type="checkbox" id="prepend-u-checkbox">
+            Random Orientation
+          </label>
+          <label style="font-size: 14px; display: block;">
+            <input type="checkbox" id="append-u-checkbox">
+            Random Color
+          </label>
+        </div>
 
 
-  <h1>TRAINER</h1>
-  <button id="reset-button" style="
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 6px 12px;
-    font-size: 14px;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  ">Reset</button>
-  <div class="progress-container">
-    <div id="progress-text" class="solution-text"></div>
-    <div class="progress-bar-wrapper">
-      <div id="progress-bar"></div>
+
+        <div id="edit-set-panel" style="display: none;">
+          <h3 style="text-align: center;">Edit Formula Set Contents</h3>
+          <div id="current-set-formulas"></div>
+          <div style="text-align: center;">
+            <select id="all-formulas-selector"></select>
+            <button id="add-formula-to-set-button">+ Add</button>
+          </div>
+          <div style="text-align: center;">
+            <button id="import-selection-button">Import Previous Selection</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="cube-container">
-    <div class="main-cube-with-buttons">
-      <button id="prev-cube-btn"> ← </button>
-      
+    <!-- 中欄 -->
+    <div class="trainer-center">
+      <h1>TRAINER</h1>
+
+      <div class="progress-container">
+        <div id="progress-text" class="solution-text"></div>
+        <div class="progress-bar-wrapper">
+          <div id="progress-bar"></div>
+        </div>
+      </div>
+
+      <div class="cube-container">
+        <div class="main-cube-with-buttons">
+          <button id="prev-cube-btn"> ← </button>
+          <twisty-player
+            id="main-cube"
+            style="width: 300px; height: 300px;"
+            puzzle="3x3x3"
+            background="none"
+            control-panel="none"
+            hint-facelets="none"
+            experimental-setup-anchor="end"
+            experimental-setup-alg="x2"
+            visualization="experimental-2D-LL"
+          ></twisty-player>
+          <button id="next-cube-btn"> → </button>
+        </div>
+
+        <div class="solution-wrapper">
+          <div class="solution-text" id="solution"></div>
+          <div class="solution-buttons">
+            <button id="hide-all-btn"> << </button>
+            <button id="hide-step-btn"> < </button>
+            <button id="show-step-btn"> > </button>
+            <button id="show-all-btn"> >></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右欄 -->
+    <div class="trainer-right">
+      <button id="reset-button">Reset</button>
       <twisty-player
-        id="main-cube"
-        style="width: 300px; height: 300px;"
+        id="mini-cube"
+        class="mini-cube"
         puzzle="3x3x3"
         background="none"
         control-panel="none"
         hint-facelets="none"
-        experimental-setup-anchor="end"
-        experimental-setup-alg="x2"
-        visualization="experimental-2D-LL"
       ></twisty-player>
-      
-      <button id="next-cube-btn"> → </button>
     </div>
 
-    <div class="solution-wrapper">
-      <div class="solution-text" id="solution"></div>
-      <div class="solution-buttons">
-        <button id="hide-all-btn"> << </button>
-        <button id="hide-step-btn"> < </button>
-        <button id="show-step-btn"> > </button>
-        <button id="show-all-btn"> >></button>
-      </div>
-    </div>
-
-    <twisty-player
-      id="mini-cube"
-      class="mini-cube"
-      puzzle="3x3x3"
-      background="none"
-      control-panel="none"
-      hint-facelets="none"
-    ></twisty-player>
   </div>
-  
-  <div id="debug" style="white-space: pre; font-size: 12px; color: #888; margin-top: 30px;"></div>
+    <script type="module">
+      import 'https://cdn.cubing.net/v0/js/cubing/twisty';
+      import { collAlgorithms, pllAlgorithms, ollAlgorithms, zbllAlgorithms} from './algorithms.js';
 
-  <script type="module">
-    import 'https://cdn.cubing.net/v0/js/cubing/twisty';
-    import { collAlgorithms, pllAlgorithms, ollAlgorithms, zbllAlgorithms} from './algorithms.js';
-
-    let solutionList = []; // 包含 { display, alg }
-    let currentIndex = 0;
-    let miniCubeHistAlg = "x2";
-    const historyStack = [];
-    let revealedCount = 0;
-    let currentSteps = [];
-    let randomizedSolutions = [];
+      let solutionList = []; // 包含 { display, alg }
+      let currentIndex = 0;
+      let miniCubeHistAlg = "x2";
+      const historyStack = [];
+      let revealedCount = 0;
+      let currentSteps = [];
+      let randomizedSolutions = [];
 
 
-    const solutionEl = document.getElementById("solution");
-    const mainCube = document.getElementById("main-cube");
-    const miniCube = document.getElementById("mini-cube");
+      const solutionEl = document.getElementById("solution");
+      const mainCube = document.getElementById("main-cube");
+      const miniCube = document.getElementById("mini-cube");
 
-    function generateSolutions() {
-      const collRaw = localStorage.getItem("collSelected");
-      const pllRaw = localStorage.getItem("pllSelected");
-      const ollRaw = localStorage.getItem("ollSelected");
-      const zbllRaw = localStorage.getItem("zbllSelected");
+      function generateSolutions() {
+        const allSets = getTrainerAlgorithmSets();
+        const selectedSetName = getCurrentTrainerSetName();
 
-      const collSelected = collRaw ? JSON.parse(collRaw) : [];
-      const pllSelected = pllRaw ? JSON.parse(pllRaw) : [];
-      const ollSelected = ollRaw ? JSON.parse(ollRaw) : [];
-      const zbllSelected = zbllRaw ? JSON.parse(zbllRaw) : [];
+        const selectedSet = allSets.find(set => set.name === selectedSetName);
 
-      // 合併所有選到的名字
-      const allSelected = new Set([...collSelected, ...pllSelected, ...ollSelected, ...zbllSelected]);
-
-      // 從所有的算法清單裡面找
-      const allAlgorithms = [...collAlgorithms, ...pllAlgorithms, ...ollAlgorithms, ...zbllAlgorithms];
-      const filtered = allAlgorithms.filter(a => allSelected.has(a.name));
-
-      if (filtered.length === 0) {
-        alert("Please select at least one case in Tutorials first.");
-        return;
-      }
-
-      solutionList = filtered.map(picked => ({
-        display: picked.display,
-        alg: picked.alg,
-        allowRandomU: picked.allowRandomU
-      }));
-
-      // 隨機打亂
-      for (let i = solutionList.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [solutionList[i], solutionList[j]] = [solutionList[j], solutionList[i]];
-      }
-    }
-    function applyCurrentSolution() {
-      const current = randomizedSolutions[currentIndex];
-      if (!current) return;
-
-      mainCube.alg = current.mainAlg;
-
-
-      currentSteps = current.display.trim().split(/\s+/);
-      revealedCount = 0;
-
-      const showByDefault = localStorage.getItem("showSolutionByDefault") === "true";
-      solutionEl.textContent = showByDefault ? current.display : "";
-
-      const progressText = document.getElementById("progress-text");
-      progressText.textContent = `Case ${currentIndex + 1} of ${randomizedSolutions.length}`;
-
-      const progressBar = document.getElementById("progress-bar");
-      const percent = ((currentIndex + 1) / randomizedSolutions.length) * 100;
-      progressBar.style.width = `${percent}%`;
-    }
-
-
-    
-    function showNextStep() {
-      if (revealedCount < currentSteps.length) {
-        revealedCount++;
-        solutionEl.textContent = currentSteps.slice(0, revealedCount).join(" ");
-      }
-    }
-
-    function hideStep() {
-      if (revealedCount > 0) {
-        revealedCount--;
-        solutionEl.textContent = currentSteps.slice(0, revealedCount).join(" ");
-      }
-    }
-
-    function showAllSteps() {
-      solutionEl.textContent = solutionList[currentIndex].display;
-    }
-
-    function hideAllSteps() {
-      solutionEl.textContent = "";
-    }
-
-    function goPrevious() {
-      const prev = historyStack.pop();
-      if (!prev) return;
-
-      currentIndex = prev.index;
-      miniCubeHistAlg = prev.miniAlg;
-      miniCube.alg = miniCubeHistAlg;
-      applyCurrentSolution();
-    }
-
-    function goNext() {
-      const current = randomizedSolutions[currentIndex];
-      if (!current) return;
-
-      // 儲存目前狀態（包含即將要累加的）
-      historyStack.push({
-        index: currentIndex,
-        miniAlg: miniCubeHistAlg,
-      });
-
-      // 更新 miniCube 狀態：加入這一步的公式
-      miniCubeHistAlg += " " + current.miniAlg;
-      miniCube.alg = miniCubeHistAlg;
-
-      // 下一條（循環）
-      currentIndex = (currentIndex + 1) % randomizedSolutions.length;
-      applyCurrentSolution();
-    }
-
-
-    function resetTrainer() {
-      miniCubeHistAlg = "x2";
-      miniCube.alg = miniCubeHistAlg;
-      historyStack.length = 0;
-      generateSolutions();
-
-      // 在這裡就決定好所有題目
-      randomizedSolutions = solutionList.map(item => {
-        let mainAlg = item.alg;
-        let miniAlg = item.alg;
-
-        const prependRandom = localStorage.getItem("trainerPrependRandomU") === "true";
-        const appendRandom = localStorage.getItem("trainerAppendRandomU") === "true";
-
-        function randomU() {
-          const options = ["U", "U'", "U2"];
-          return options[Math.floor(Math.random() * options.length)];
+        if (!selectedSet || !selectedSet.selected || selectedSet.selected.length === 0) {
+          alert("Please select a formula set first.");
+          return;
         }
 
-        const allowRandomU = item.allowRandomU !== false;  // 預設 true，false 則禁止
+        const allAlgorithms = [...collAlgorithms, ...pllAlgorithms, ...ollAlgorithms, ...zbllAlgorithms];
 
-        if (prependRandom && allowRandomU) {
-          const randMove = randomU();
-          mainAlg = `${randMove} ${mainAlg}`;
-          miniAlg = `${randMove} ${miniAlg}`;
+        // 只保留名字在選到集合裡的
+        const filtered = allAlgorithms.filter(a => selectedSet.selected.includes(a.name));
+
+        if (filtered.length === 0) {
+          alert("No formulas found in the selected set.");
+          return;
         }
 
+        solutionList = filtered.map(picked => ({
+          display: picked.display,
+          alg: picked.alg,
+          allowRandomU: picked.allowRandomU
+        }));
 
-        if (appendRandom && allowRandomU) {
-          mainAlg = `${mainAlg} ${randomU()}`;
+        // 打亂
+        for (let i = solutionList.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [solutionList[i], solutionList[j]] = [solutionList[j], solutionList[i]];
+        }
+      }
+      function applyCurrentSolution() {
+        const current = randomizedSolutions[currentIndex];
+        if (!current) return;
+
+        mainCube.alg = current.mainAlg;
+
+
+        currentSteps = current.display.trim().split(/\s+/);
+        revealedCount = 0;
+
+        const showByDefault = localStorage.getItem("showSolutionByDefault") === "true";
+        solutionEl.textContent = showByDefault ? current.display : "";
+
+        const progressText = document.getElementById("progress-text");
+        progressText.textContent = `Case ${currentIndex + 1} of ${randomizedSolutions.length}`;
+
+        const progressBar = document.getElementById("progress-bar");
+        const percent = ((currentIndex + 1) / randomizedSolutions.length) * 100;
+        progressBar.style.width = `${percent}%`;
+      }
+      function showNextStep() {
+        if (revealedCount < currentSteps.length) {
+          revealedCount++;
+          solutionEl.textContent = currentSteps.slice(0, revealedCount).join(" ");
+        }
+      }
+      function hideStep() {
+        if (revealedCount > 0) {
+          revealedCount--;
+          solutionEl.textContent = currentSteps.slice(0, revealedCount).join(" ");
+        }
+      }
+      function showAllSteps() {
+        solutionEl.textContent = solutionList[currentIndex].display;
+      }
+      function hideAllSteps() {
+        solutionEl.textContent = "";
+      }
+      function goPrevious() {
+        const prev = historyStack.pop();
+        if (!prev) return;
+
+        currentIndex = prev.index;
+        miniCubeHistAlg = prev.miniAlg;
+        miniCube.alg = miniCubeHistAlg;
+        applyCurrentSolution();
+      }
+      function goNext() {
+        const current = randomizedSolutions[currentIndex];
+        if (!current) return;
+
+        // 儲存目前狀態（包含即將要累加的）
+        historyStack.push({
+          index: currentIndex,
+          miniAlg: miniCubeHistAlg,
+        });
+
+        // 更新 miniCube 狀態：加入這一步的公式
+        miniCubeHistAlg += " " + current.miniAlg;
+        miniCube.alg = miniCubeHistAlg;
+
+        // 下一條（循環）
+        currentIndex = (currentIndex + 1) % randomizedSolutions.length;
+        applyCurrentSolution();
+      }
+      function resetTrainer() {
+        miniCubeHistAlg = "x2";
+        miniCube.alg = miniCubeHistAlg;
+        historyStack.length = 0;
+        generateSolutions();
+
+        // 在這裡就決定好所有題目
+        randomizedSolutions = solutionList.map(item => {
+          let mainAlg = item.alg;
+          let miniAlg = item.alg;
+
+          const prependRandom = localStorage.getItem("trainerPrependRandomU") === "true";
+          const appendRandom = localStorage.getItem("trainerAppendRandomU") === "true";
+
+          function randomU() {
+            const options = ["U", "U'", "U2"];
+            return options[Math.floor(Math.random() * options.length)];
+          }
+
+          const allowRandomU = item.allowRandomU !== false;  // 預設 true，false 則禁止
+
+          if (prependRandom && allowRandomU) {
+            const randMove = randomU();
+            mainAlg = `${randMove} ${mainAlg}`;
+            miniAlg = `${randMove} ${miniAlg}`;
+          }
+
+
+          if (appendRandom && allowRandomU) {
+            mainAlg = `${mainAlg} ${randomU()}`;
+          }
+
+
+          return {
+            display: item.display,
+            mainAlg,
+            miniAlg
+          };
+        });
+
+        currentIndex = 0;
+        applyCurrentSolution();
+
+        applyCurrentSolution();
+        populateSetSelector();
+      }
+      document.getElementById("show-step-btn").addEventListener("click", showNextStep);
+      document.getElementById("hide-step-btn").addEventListener("click", hideStep);
+      document.getElementById("show-all-btn").addEventListener("click", showAllSteps);
+      document.getElementById("hide-all-btn").addEventListener("click", hideAllSteps);
+      document.getElementById("prev-cube-btn").addEventListener("click", goPrevious);
+      document.getElementById("next-cube-btn").addEventListener("click", goNext);
+      document.getElementById('add-set-button').addEventListener('click', addNewTrainerSet);
+      document.getElementById('delete-set-button').addEventListener('click', deleteCurrentTrainerSet);
+      document.getElementById('rename-set-button').addEventListener('click', renameCurrentTrainerSet);
+      document.getElementById('toggle-edit-panel-button').addEventListener('click', toggleEditPanel);
+      document.getElementById('add-formula-to-set-button').addEventListener('click', addFormulaToCurrentSet);
+      document.getElementById('import-selection-button').addEventListener('click', importPreviousSelectionToCurrentSet);
+        document.getElementById("reset-button").addEventListener("click", (e) => {e.preventDefault();resetTrainer();e.currentTarget.blur();});
+
+      function getTrainerAlgorithmSets() {
+        const raw = localStorage.getItem('trainerAlgorithmSets');
+        if (!raw) return [];
+        try {
+          return JSON.parse(raw);
+        } catch {
+          return [];
+        }
+      }
+
+      function saveTrainerAlgorithmSets(allSets) {
+        localStorage.setItem('trainerAlgorithmSets', JSON.stringify(allSets));
+      }
+
+      function getCurrentTrainerSetName() {
+        return localStorage.getItem('trainerSelectedSetName') || "";
+      }
+
+      function setCurrentTrainerSetName(name) {
+        localStorage.setItem('trainerSelectedSetName', name);
+      }
+
+      function populateSetSelector() {
+        const selector = document.getElementById('set-selector');
+        const allSets = getTrainerAlgorithmSets();
+        const currentSetName = getCurrentTrainerSetName();
+
+        // 先清空
+        selector.innerHTML = "";
+
+        allSets.forEach(set => {
+          const option = document.createElement('option');
+          option.value = set.name;
+          option.textContent = set.name;
+          if (set.name === currentSetName) {
+            option.selected = true;
+          }
+          selector.appendChild(option);
+        });
+
+        selector.addEventListener('change', (e) => {
+          const newName = e.target.value;
+          setCurrentTrainerSetName(newName);
+          resetTrainer();
+        });
+      }
+      function addNewTrainerSet() {
+        const name = prompt("Enter a name for the new formula set:");
+        if (!name) return;
+
+        const allSets = getTrainerAlgorithmSets();
+
+        if (allSets.find(set => set.name === name)) {
+          alert("A set with this name already exists!");
+          return;
         }
 
+        // 建立一個空的
+        allSets.push({
+          name: name,
+          selected: []
+        });
 
-        return {
-          display: item.display,
-          mainAlg,
-          miniAlg
-        };
-      });
+        saveTrainerAlgorithmSets(allSets);
+        setCurrentTrainerSetName(name);
+        resetTrainer();
+      }
+      function deleteCurrentTrainerSet() {
+        const currentName = getCurrentTrainerSetName();
+        if (!currentName) {
+          alert("No set selected.");
+          return;
+        }
 
-      currentIndex = 0;
-      applyCurrentSolution();
+        if (!confirm(`Delete set "${currentName}"? This cannot be undone.`)) {
+          return;
+        }
+
+        let allSets = getTrainerAlgorithmSets();
+        allSets = allSets.filter(set => set.name !== currentName);
+
+        saveTrainerAlgorithmSets(allSets);
+
+        if (allSets.length > 0) {
+          setCurrentTrainerSetName(allSets[0].name);
+        } else {
+          setCurrentTrainerSetName("");
+        }
+
+        resetTrainer();
+      }
+      function renameCurrentTrainerSet() {
+    const currentName = getCurrentTrainerSetName();
+    if (!currentName) {
+      alert("No set selected.");
+      return;
     }
-    document.getElementById("show-step-btn").addEventListener("click", showNextStep);
-    document.getElementById("hide-step-btn").addEventListener("click", hideStep);
-    document.getElementById("show-all-btn").addEventListener("click", showAllSteps);
-    document.getElementById("hide-all-btn").addEventListener("click", hideAllSteps);
-    document.getElementById("prev-cube-btn").addEventListener("click", goPrevious);
-    document.getElementById("next-cube-btn").addEventListener("click", goNext);
 
-
-    function updateDebug() {
-      const debugEl = document.getElementById("debug");
-      const current = solutionList[currentIndex];
-      debugEl.textContent = `
-  currentIndex:         ${currentIndex + 1} / ${solutionList.length}
-  currentDisplay:       ${current?.display || ""}
-  currentAlg:           ${current?.alg || ""}
-  miniCubeHistAlg:      ${miniCubeHistAlg}
-  historyStack.length:  ${historyStack.length}
-      `.trim();
+    const newName = prompt(`Rename "${currentName}" to:`, currentName);
+    if (!newName || newName.trim() === currentName) {
+      return;
     }
 
-    document.getElementById("reset-button").addEventListener("click", (e) => {
-      e.preventDefault();
-      resetTrainer();
-      e.currentTarget.blur();
+    const allSets = getTrainerAlgorithmSets();
+
+    // 確認名字是否已存在
+    if (allSets.some(set => set.name === newName.trim())) {
+      alert("A set with this name already exists!");
+      return;
+    }
+
+    // 修改名稱
+    allSets.forEach(set => {
+      if (set.name === currentName) {
+        set.name = newName.trim();
+      }
     });
 
-    window.addEventListener("keydown", (e) => {
-      if (document.activeElement) document.activeElement.blur();
-      if (e.key === "ArrowRight" && e.ctrlKey) {
-        e.preventDefault();
-        showAllSteps();
-      } else if (e.key === "ArrowLeft" && e.ctrlKey) {
-        e.preventDefault();
-        hideAllSteps();
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        showNextStep();
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        hideStep();
-      }
-
-      if (e.key === "Enter" && e.shiftKey) {
-        e.preventDefault();
-        goPrevious();
-        return;
-      }
-
-      if (e.key === "Enter") {
-        e.preventDefault();
-        goNext();
-        return;
-      }
-
-      if (e.key.toLowerCase() === "r") {
-        e.preventDefault();
-        resetTrainer();
-      } else if (e.key === "Escape") {
-        window.location.href = "index.html";
-      }
-    }, { capture: true });
-
-    // 初始化
-    mainCube.alg = "";
-    miniCube.alg = miniCubeHistAlg;
-    solutionEl.textContent = "";
+    saveTrainerAlgorithmSets(allSets);
+    setCurrentTrainerSetName(newName.trim());
     resetTrainer();
-  </script>
+  }
+      function toggleEditPanel() {
+        const panel = document.getElementById('edit-set-panel');
+        if (panel.style.display === 'none') {
+          panel.style.display = 'block';
+          renderCurrentSetContents();
+          populateAllFormulaSelector();
+        } else {
+          panel.style.display = 'none';
+        }
+      }
+      function renderCurrentSetContents() {
+    const container = document.getElementById('current-set-formulas');
+    container.innerHTML = "";
+
+    const allSets = getTrainerAlgorithmSets();
+    const currentName = getCurrentTrainerSetName();
+    const selectedSet = allSets.find(set => set.name === currentName);
+
+    if (!selectedSet) {
+      container.textContent = "No set selected.";
+      return;
+    }
+
+    if (!selectedSet.selected || selectedSet.selected.length === 0) {
+      container.textContent = "This set has no formulas yet.";
+      return;
+    }
+
+    selectedSet.selected.forEach(name => {
+      const item = document.createElement('div');
+      item.style.marginBottom = "4px";
+      item.style.display = "flex";
+      item.style.justifyContent = "space-between";
+      item.style.alignItems = "center";
+
+      const label = document.createElement('span');
+      label.textContent = name;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = "Remove";
+      removeBtn.style.marginLeft = "10px";
+      removeBtn.style.padding = "2px 6px";
+      removeBtn.style.fontSize = "12px";
+      removeBtn.addEventListener('click', () => {
+        removeFormulaFromSet(name);
+      });
+
+      item.appendChild(label);
+      item.appendChild(removeBtn);
+
+      container.appendChild(item);
+    });
+  }
+      function removeFormulaFromSet(nameToRemove) {
+    const allSets = getTrainerAlgorithmSets();
+    const currentName = getCurrentTrainerSetName();
+    const selectedSet = allSets.find(set => set.name === currentName);
+
+    if (!selectedSet) return;
+
+    selectedSet.selected = selectedSet.selected.filter(n => n !== nameToRemove);
+
+    saveTrainerAlgorithmSets(allSets);
+
+    renderCurrentSetContents();
+    resetTrainer();
+  }
+      function populateAllFormulaSelector() {
+    const selector = document.getElementById('all-formulas-selector');
+    selector.innerHTML = "";
+
+    const allAlgorithms = [...collAlgorithms, ...pllAlgorithms, ...ollAlgorithms, ...zbllAlgorithms];
+
+    allAlgorithms.forEach(alg => {
+      const option = document.createElement('option');
+      option.value = alg.name;
+      option.textContent = `${alg.name} - ${alg.display}`;
+      selector.appendChild(option);
+    });
+  }
+      function addFormulaToCurrentSet() {
+    const selectedFormula = document.getElementById('all-formulas-selector').value;
+    if (!selectedFormula) return;
+
+    const allSets = getTrainerAlgorithmSets();
+    const currentName = getCurrentTrainerSetName();
+    const selectedSet = allSets.find(set => set.name === currentName);
+
+    if (!selectedSet) {
+      alert("No set selected.");
+      return;
+    }
+
+    if (!selectedSet.selected.includes(selectedFormula)) {
+      selectedSet.selected.push(selectedFormula);
+      saveTrainerAlgorithmSets(allSets);
+    }
+
+    renderCurrentSetContents();
+    resetTrainer();
+  }
+      function importPreviousSelectionToCurrentSet() {
+    const collRaw = localStorage.getItem("collSelected");
+    const pllRaw = localStorage.getItem("pllSelected");
+    const ollRaw = localStorage.getItem("ollSelected");
+    const zbllRaw = localStorage.getItem("zbllSelected");
+
+    const collSelected = collRaw ? JSON.parse(collRaw) : [];
+    const pllSelected = pllRaw ? JSON.parse(pllRaw) : [];
+    const ollSelected = ollRaw ? JSON.parse(ollRaw) : [];
+    const zbllSelected = zbllRaw ? JSON.parse(zbllRaw) : [];
+
+    const allPrevious = new Set([
+      ...collSelected,
+      ...pllSelected,
+      ...ollSelected,
+      ...zbllSelected
+    ]);
+
+    if (allPrevious.size === 0) {
+      alert("No previously selected formulas found.");
+      return;
+    }
+
+    const allSets = getTrainerAlgorithmSets();
+    const currentName = getCurrentTrainerSetName();
+    const selectedSet = allSets.find(set => set.name === currentName);
+
+    if (!selectedSet) {
+      alert("No set selected.");
+      return;
+    }
+
+    // 把新公式加進集合（避免重複）
+    allPrevious.forEach(name => {
+      if (!selectedSet.selected.includes(name)) {
+        selectedSet.selected.push(name);
+      }
+    });
+
+    saveTrainerAlgorithmSets(allSets);
+    renderCurrentSetContents();
+    resetTrainer();
+
+    alert(`Imported ${allPrevious.size} formulas from previous selection!`);
+  }
+
+      function updateDebug() {
+        const debugEl = document.getElementById("debug");
+        const current = solutionList[currentIndex];
+        debugEl.textContent = `
+    currentIndex:         ${currentIndex + 1} / ${solutionList.length}
+    currentDisplay:       ${current?.display || ""}
+    currentAlg:           ${current?.alg || ""}
+    miniCubeHistAlg:      ${miniCubeHistAlg}
+    historyStack.length:  ${historyStack.length}
+        `.trim();
+      }
 
 
+      window.addEventListener("keydown", (e) => {
+        if (document.activeElement) document.activeElement.blur();
+        if (e.key === "ArrowRight" && e.ctrlKey) {
+          e.preventDefault();
+          showAllSteps();
+        } else if (e.key === "ArrowLeft" && e.ctrlKey) {
+          e.preventDefault();
+          hideAllSteps();
+        } else if (e.key === "ArrowRight") {
+          e.preventDefault();
+          showNextStep();
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          hideStep();
+        }
+
+        if (e.key === "Enter" && e.shiftKey) {
+          e.preventDefault();
+          goPrevious();
+          return;
+        }
+
+        if (e.key === "Enter") {
+          e.preventDefault();
+          goNext();
+          return;
+        }
+
+        if (e.key.toLowerCase() === "r") {
+          e.preventDefault();
+          resetTrainer();
+        } else if (e.key === "Escape") {
+          window.location.href = "index.html";
+        }
+      }, { capture: true });
+
+      // 初始化
+      mainCube.alg = "";
+      miniCube.alg = miniCubeHistAlg;
+      solutionEl.textContent = "";
+      resetTrainer();
+
+
+      window.addEventListener("DOMContentLoaded", () => {
+        // Random U Options checkboxes
+        const prependCheckbox = document.getElementById("prepend-u-checkbox");
+        const prependValue = localStorage.getItem("trainerPrependRandomU") === "true";
+        prependCheckbox.checked = prependValue;
+        prependCheckbox.addEventListener("change", () => {
+          localStorage.setItem("trainerPrependRandomU", prependCheckbox.checked);
+        });
+
+        const appendCheckbox = document.getElementById("append-u-checkbox");
+        const appendValue = localStorage.getItem("trainerAppendRandomU") === "true";
+        appendCheckbox.checked = appendValue;
+        appendCheckbox.addEventListener("change", () => {
+          localStorage.setItem("trainerAppendRandomU", appendCheckbox.checked);
+        });
+      });
+
+    </script>
+
+  
 </body>
 </html>

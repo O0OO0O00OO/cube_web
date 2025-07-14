@@ -20,7 +20,7 @@ export const pllAlgorithms = [
   { group: "Edges Only",           name: "Ub", img: "./images/pll_Ub.png", alg: "U2 R2 U R U R' U' R' U' R' U R' U2", display:"1512 444 2154 511" },
   { group: "Diagonal Corner Swap", name: "V",  img: "./images/pll_V.png",  alg: "U' R' U R' U' y R' F' R2 U' R' U R' F R F y' U", display:"4245124D'42D 11244D'11" },
   { group: "Diagonal Corner Swap", name: "Y",  img: "./images/pll_Y.png",  alg: "F R U' R' U' R U R' F' R U R' U' R' F R F'", display:"642124513 4512 1643" },
-  { group: "Edges Only",           name: "Z",  img: "./images/pll_Z.png",  alg: "M' U' M2 U' M2 U' M' U2 M2 U", display:"M U M2 U MU 2 M U2 M2 U'" ,allowRandomU: false }
+  { group: "Edges Only",           name: "Z",  img: "./images/pll_Z.png",  alg: "M' U' M2 U' M2 U' M' U2 M2 U", display:"M U M2 U M2 U M U2 M2 U'" ,allowRandomU: false }
 ];
 
 export const collAlgorithms = [
@@ -62,7 +62,7 @@ export const ollAlgorithms = [
   { group: "Awkward Shape", name: "29", img: "./images/oll_29.png", alg: "l D l' U l D' l2 U l U' l' U' l", display: "(7)D (8)5(7) D' (88)5(7) 2(8)2(7)" },
   { group: "Awkward Shape", name: "30", img: "./images/oll_30.png", alg: "r' D' r U' r' D r2 U' r' U r U r'", display: "(1)D' (4)2(1) D (44)2(1) 5(4)5(1) " },
   { group: "Awkward Shape", name: "41_1", img: "./images/oll_41_1.png", alg: "R U R' U R U2 R' F R U R' U' F'", display: "sune 6 4512 3" },
-  { group: "Awkward Shape", name: "41_2", img: "./images/oll_41_2.png", alg: "L F' L' F L F' L' F L' U' L U L' U' L", display: "7386 7386 8275 8275" },
+  { group: "Awkward Shape", name: "41_2", img: "./images/oll_41_2.png", alg: "L F' L' F L F' L' F L' U' L U L' U' L", display: "mirror: 1643 1643 4512 451" },
   { group: "Awkward Shape", name: "42_1", img: "./images/oll_42_1.png", alg: "R' U' R U' R' U2 R F R U R' U' F'", display: "backsune 6 4512 3" },
   { group: "Awkward Shape", name: "42_2", img: "./images/oll_42_2.png", alg: "R' F R F' R' F R F' R U R' U' R U R'", display: "1643 1643 4512 451" },
   { group: "Big Lightning Bolt", name: "39", img: "./images/oll_39.png", alg: "L F' L' U' L U F U' L'", display: "7382 75628" }, 
@@ -111,7 +111,7 @@ export const ollAlgorithms = [
   { group: "Small L shape", name: "47", img: "./images/oll_47.png", alg: "F R' F' R U2 R U' R' U R U2 R'", display: "6134 55421 54221" },
   { group: "Small L shape", name: "48", img: "./images/oll_48.png", alg: "F R U R' U' R U R' U' F'", display: "6 4512 4512 3" },
   { group: "Small L shape", name: "49_1", img: "./images/oll_49_1.png", alg: "r U' r2 U r2 U r2 U' r", display: "(4)2(11)2(44)2(11)2(4)" },
-  { group: "Small L shape", name: "49_2", img: "./images/oll_49_2.png", alg: "L' U2 L U L' U L F' L' U' L U F", display: "82275 8573 82756" },
+  { group: "Small L shape", name: "49_2", img: "./images/oll_49_2.png", alg: "L' U2 L U L' U L F' L' U' L U F", display: "mirror: antisune 6 4512 3" },
   { group: "Small L shape", name: "50_1", img: "./images/oll_50_1.png", alg: "r' U r2 U' r2 U' r2 U r'", display: "(1)5(44)2(11)2(44)5(11)" },
   { group: "Small L shape", name: "50_2", img: "./images/oll_50_2.png", alg: "R U2 R' U' R U' R' F R U R' U' F'", display: "antisune 6 4512 3" },
   { group: "Small L shape", name: "53", img: "./images/oll_53.png", alg: "r' U' R U' R' U R U' R' U2 r", display: "(1)242 1542 122(4)" },
