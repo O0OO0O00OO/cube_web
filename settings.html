@@ -47,13 +47,6 @@
     <h2>Clear All Records</h2>
     <button onclick="clearAllRecords()">Clear Records</button>
   </div>
-  <div class="section">
-    <h2>Trainer Options</h2>
-    <label style="font-size: 16px;">
-      <input type="checkbox" id="show-solution-checkbox">
-      Show solution by default in trainer
-    </label>
-  </div>
   
 
   <script>
@@ -65,13 +58,6 @@
     });
 // 載入時同步 checkbox 狀態
     window.addEventListener("DOMContentLoaded", () => {
-      const checkbox = document.getElementById("show-solution-checkbox");
-      const value = localStorage.getItem("showSolutionByDefault") === "true";
-      checkbox.checked = value;
-
-      checkbox.addEventListener("change", () => {
-        localStorage.setItem("showSolutionByDefault", checkbox.checked);
-      });
 
       const prependCheckbox = document.getElementById("prepend-u-checkbox");
       const prependValue = localStorage.getItem("trainerPrependRandomU") === "true";

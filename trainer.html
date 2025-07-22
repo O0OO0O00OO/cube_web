@@ -190,7 +190,6 @@
         <button id="toggle-edit-panel-button">✎ Edit Set Contents</button>
 
         <div class="trainer-random-u-options">
-          <h3>Trainer Random U Options</h3>
           <label style="font-size: 14px; display: block;">
             <input type="checkbox" id="prepend-u-checkbox">
             Random Orientation
@@ -200,7 +199,12 @@
             Random Color
           </label>
         </div>
-
+        <div class="trainer-show-solution-option">
+          <label style="font-size: 14px; display: block;">
+            <input type="checkbox" id="show-solution-checkbox">
+            Show solution by default
+          </label>
+        </div>
 
 
         <div id="edit-set-panel" style="display: none;">
@@ -214,6 +218,10 @@
             <button id="import-selection-button">Import Previous Selection</button>
           </div>
         </div>
+
+
+
+
       </div>
     </div>
 
@@ -786,6 +794,15 @@
         appendCheckbox.addEventListener("change", () => {
           localStorage.setItem("trainerAppendRandomU", appendCheckbox.checked);
         });
+
+        const showSolutionCheckbox = document.getElementById("show-solution-checkbox");
+        const showSolutionValue = localStorage.getItem("showSolutionByDefault") === "true";
+        showSolutionCheckbox.checked = showSolutionValue;
+
+        showSolutionCheckbox.addEventListener("change", () => {
+          localStorage.setItem("showSolutionByDefault", showSolutionCheckbox.checked);
+        });
+
       });
 
     </script>

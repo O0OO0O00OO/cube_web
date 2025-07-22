@@ -65,7 +65,7 @@ export const ollAlgorithms = [
   { group: "Awkward Shape", name: "41_2", img: "./images/oll_41_2.png", alg: "L F' L' F L F' L' F L' U' L U L' U' L", display: "mirror: 1643 1643 4512 451" },
   { group: "Awkward Shape", name: "42_1", img: "./images/oll_42_1.png", alg: "R' U' R U' R' U2 R F R U R' U' F'", display: "backsune 6 4512 3" },
   { group: "Awkward Shape", name: "42_2", img: "./images/oll_42_2.png", alg: "R' F R F' R' F R F' R U R' U' R U R'", display: "1643 1643 4512 451" },
-  { group: "Big Lightning Bolt", name: "39", img: "./images/oll_39.png", alg: "L F' L' U' L U F U' L'", display: "7382 75628" }, 
+  { group: "Big Lightning Bolt", name: "39", img: "./images/oll_39.png", alg: "f' r U r' U' r' F r S", display: "(3) (4)5(1)2 (1)64S" }, 
   { group: "Big Lightning Bolt", name: "40", img: "./images/oll_40.png", alg: "R' F R U R' U' F' U R", display: "1645 12354" },
   { group: "C shape", name: "34", img: "./images/oll_34.png", alg: "f R f' U' r' U' R U M'", display: "(6)4(3)2 (1)245 M'" },
   { group: "C shape", name: "46", img: "./images/oll_46.png", alg: "R' U' R' F R F' U R", display: "1216 4354" },
