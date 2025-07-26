@@ -51,7 +51,7 @@ export const collAlgorithms = [
   { group: "T", name: "T6", img: "./images/coll_t6.png", alg: "R' U R2 D r' U2 r D' R2 U' R", display: "1544 D (1)55(4) D' 1124" },
 
   { group: "L", name: "L1", img: "./images/coll_l1.png", alg: "R' U' R U R' F' R U R' U' R' F R2", display: "12 j-perm" },
-  { group: "L", name: "L2", img: "./images/coll_l2.png", alg: "R' U2 R U R' U' R U R' U' R U R' U R", display: "122 4512 4512 45154" },
+  { group: "L", name: "L2", img: "./images/coll_l2.png", alg: "R U R' U R U' R' U R U' R' U R U2 R'", display: "4515 4215 4215 4221" },
   { group: "L", name: "L3", img: "./images/coll_l3.png", alg: "R U2 R D R' U2 R D' R2", display: "4224 D 1554 D' 11" },
   { group: "L", name: "L4", img: "./images/coll_l4.png", alg: "R' U2 R' D' R U2 R' D R2", display: "1551 D' 4551 D 44" },
   { group: "L", name: "L5", img: "./images/coll_l5.png", alg: "x R' U R D' R' U' R D x'", display: "x 154D' 124D " },
@@ -161,3 +161,32 @@ export const zbllAlgorithms = [
  * back-sune R' U' R U' R' U2 R
  * anti-back-sune R' U2 R U R' U R
  * **/
+export const wvAlgorithms = [
+  {group: "3 corners", name:"oriented", img: "./images/wv_oriented.png", alg: "L' U2 R U R' U2 L", display: "855 451 557"},
+  {group: "2 corners", name:"rectangle1", img: "./images/wv_rectangle1.png", alg: "U' R' F R U R U' R' F'", display: "2 1645 4213"},
+  {group: "2 corners", name:"rectangle2", img: "./images/wv_rectangle2.png", alg: "R U' R'", display: "421"},
+  {group: "2 corners", name:"snake1", img: "./images/wv_snake1.png", alg: "R U' R' U R' U' R U' R' U2 R", display: "4215 backsune"},
+  {group: "2 corners", name:"snake2", img: "./images/wv_snake2.png", alg: "R2 D R' U' R D' R2", display: "44D 124D' 11"},
+  {group: "2 corners", name:"tank1", img: "./images/wv_tank1.png", alg: "R U R' U' R U' R'", display: "4512 421"},
+  {group: "2 corners", name:"tank2", img: "./images/wv_tank2.png", alg: "U' R U' R' U2 R U' R' U2 R U R'", display: "2 42155 42155 451"},
+  {group: "1 corner", name:"adjacent1", img: "./images/wv_adjacent1.png", alg: "U' R' F2 R2 U' R' U' R U R' F2", display: "2 166442 1245166"},
+  {group: "1 corner", name:"adjacent2", img: "./images/wv_adjacent2.png", alg: "U' R' F' R U2 R U2 R' F", display: "2134 554221 6"},
+  {group: "1 corner", name:"adjacent3", img: "./images/wv_adjacent3.png", alg: "U R U2 R'", display: "54221"},
+  {group: "1 corner", name:"adjacent4", img: "./images/wv_adjacent4.png", alg: "U R U' R' U' R' F R U R U' R' F'", display: "5421 2164 5421 3"},
+  {group: "1 corner", name:"bowtie1", img: "./images/wv_bowtie1.png", alg: "U' L' U R U' R' L", display: "28542 17"},
+  {group: "1 corner", name:"bowtie2", img: "./images/wv_bowtie2.png", alg: "U R2 D R' U2 R D' R2", display: "544D 1224D' 11"},
+  {group: "1 corner", name:"bowtie3", img: "./images/wv_bowtie3.png", alg: "U R U2 R2 U' R U' R' U2 R", display: "54221 backsune"},
+  {group: "1 corner", name:"bowtie4", img: "./images/wv_bowtie4.png", alg: "U' R' F2 R F2 U L' U L", display: "2 (8)55 (7)33 5857"},
+  {group: "1 corner", name:"gun1", img: "./images/wv_gun1.png", alg: "R U R2 U' R2 U' R2 U2 R", display: "45112 44211224"},
+  {group: "1 corner", name:"gun2", img: "./images/wv_gun2.png", alg: "U R' U' R2 U' R2 U2 R", display: "51244 211224"},
+  {group: "1 corner", name:"gun3", img: "./images/wv_gun3.png", alg: "U R U' R' U R U2 R'", display: "5421 54221"},
+  {group: "1 corner", name:"gun4", img: "./images/wv_gun4.png", alg: "R U' R' U R U2 R2 U' R2 U' R2 U2 R", display: "4215 std_pi"},
+  {group: "0 corner", name:"h1", img: "./images/wv_h1.png", alg: "U R2 U R' U R' U' R U R U2 R2", display: "5 44515 1245 42211"},
+  {group: "0 corner", name:"h2", img: "./images/wv_h2.png", alg: "U R U' R' U R U' R' U R U2 R'", display: "5421 5421 54221"},
+  {group: "0 corner", name:"pi1", img: "./images/wv_pi1.png", alg: "R2 D R' U R D' R' U2 R'", display: "44D 124 D' 1551"},
+  {group: "0 corner", name:"pi2", img: "./images/wv_pi2.png", alg: "R U' R2 U2 R U R' U R", display: "421122 45154"},
+  {group: "0 corner", name:"pi3", img: "./images/wv_pi3.png", alg: "U R U2 R2 U2 R U R' U R", display: "54221 antibacksune"},
+  {group: "0 corner", name:"pi4", img: "./images/wv_pi4.png", alg: "R U' R2 U' R U' R' U2 R", display: "42112 421224"},
+  {group: "0 corner", name:"sune1", img: "./images/wv_sune1.png", alg: "R U R' U' R U R' U' R U' R'", display: "4512 4512 421"},
+  {group: "0 corner", name:"sune2", img: "./images/wv_sune2.png", alg: "R U' R' U' R U R' U R U2 R'", display: "4212 sune"}
+] 
