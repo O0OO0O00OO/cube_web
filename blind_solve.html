@@ -369,25 +369,6 @@ function updateProgressUI() {
   progressBar.style.width = pct + '%';
   progressText.textContent = `${done}/${total}`;
 }
-
-function resetSeenLetters() {
-  seenSet.clear();
-  seenList = [];
-  seenWrap.innerHTML = '';
-}
-
-function addSeenLetter(letter) {
-  const L = (letter || '').toUpperCase();
-  if (!L) return;
-  if (seenSet.has(L)) return;
-  seenSet.add(L);
-  seenList.push(L);
-  const span = document.createElement('span');
-  span.className = 'badge';
-  span.textContent = L;
-  seenWrap.appendChild(span);
-}
-
   // ========== Start / Reset ==========
   ui.start.addEventListener('click', () => {
     deckState.mode   = ui.mode.value;          // edges / corners / all
@@ -395,7 +376,6 @@ function addSeenLetter(letter) {
     deckState.cursor = 0;
     setCurrentFromDeck();
     renderCurrent();
-    resetSeenLetters();
     updateProgressUI(); // 初始 0/總
 
   });
@@ -406,8 +386,7 @@ function addSeenLetter(letter) {
     deckState.cursor = 0;
     setCurrentFromDeck();
     renderCurrent();
-    resetSeenLetters();
-updateProgressUI();
+    updateProgressUI();
 
   });
   // ========== 按鍵提示泡泡 ==========
@@ -473,8 +452,6 @@ document.addEventListener('keyup', (e) => {
     // 先把「這一題」的正解字母記錄到已出現清單
     const info = SCHEME[current.mode]?.[current.pos]?.stickers?.[current.face];
     const ans  = (info?.letter || "").toUpperCase();
-    addSeenLetter(ans);
-
     nextCard();         // 換題
     updateProgressUI(); // 更新進度條/數字
   }
