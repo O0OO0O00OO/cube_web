@@ -137,24 +137,9 @@
   background: linear-gradient(90deg, #58ffa7, #4dc4ff);
   transition: width .18s ease;
 }
+#pbEdges, #pbCorners, #pbAll { font-weight: 700; }
 
-/* 已出現過的字母徽章 */
-.letters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  max-width: 220px;
-}
-.letters .badge {
-  padding: 4px 6px;
-  border: 1px solid rgba(255,255,255,0.22);
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .5px;
-  color: white;
-  opacity: .95;
-}
+
 
   </style>
 </head>
@@ -208,6 +193,20 @@
         <div class="row">
             <button id="start" class="primary">Start / Reset</button>
         </div>
+        <!-- 計時器 -->
+        <div class="row">
+          <div style="opacity:.85; font-weight:700;">Time</div>
+          <div id="timer" style="margin-left:8px;">00:00.00</div>
+        </div>
+        <!-- Personal Best -->
+        <div class="row" style="flex-direction:column; align-items:flex-start;">
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <div>Edges: <span id="pbEdges">--:--.--</span></div>
+            <div>Corners: <span id="pbCorners">--:--.--</span></div>
+            <div>All: <span id="pbAll">--:--.--</span></div>
+          </div>
+        </div>
+
         <!-- 進度 -->
         <div class="row" style="align-items:center; gap:10px;">
             <div class="progress" style="flex:1;">
@@ -224,6 +223,12 @@
   // ========== Esc 回首頁 ==========
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") window.location.href = "index.html";
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ') {
+      e.preventDefault();        // 避免頁面捲動
+      ui.start.click();          // 觸發 Start/Reset
+    }
   });
 
   // ========== 取得 DOM ==========
@@ -344,15 +349,30 @@ function buildDeck(mode){
     current.index = ORDER[current.mode].indexOf(current.pos);
   }
 
-  function nextCard(){
-    deckState.cursor++;
-    if (deckState.cursor >= deckState.deck.length) {
-      deckState.deck = buildDeck(deckState.mode); // 一輪完 → 重洗
-      deckState.cursor = 0;
-    }
-    setCurrentFromDeck();
-    renderCurrent();
+function nextCard(){
+  // 完成這題，移到下一題
+  deckState.cursor++;
+
+  const total = deckState.deck.length;
+
+  if (deckState.cursor >= total) {
+    // 一輪完成：停表 + 紀錄 PB（依目前模式）
+    if (typeof updateProgressUI === 'function') updateProgressUI();
+    stopTimer();
+
+    // 這一輪耗時（毫秒）
+    const elapsed = Date.now() - startTime;
+    maybeUpdatePB(deckState.mode, elapsed);
+
+    // 不自動重洗；等你按 Start/空白鍵重開新一輪
+    return;
   }
+
+  setCurrentFromDeck();
+  renderCurrent();
+  if (typeof updateProgressUI === 'function') updateProgressUI();
+}
+
 
   // ========== 題目顯示 ==========
   function renderCurrent() {
@@ -376,19 +396,76 @@ function updateProgressUI() {
     deckState.cursor = 0;
     setCurrentFromDeck();
     renderCurrent();
+        // 重設進度/已見字母（若你有那段 UI 的話）
+    if (typeof updateProgressUI === 'function') updateProgressUI();
+
+    // 開始計時
+    startTimer();
+
     updateProgressUI(); // 初始 0/總
 
   });
   // === 進到頁面自動出第一題 ===
-  window.addEventListener("load", () => {
-    deckState.mode   = ui.mode.value;          // 預設模式依下拉選單
-    deckState.deck   = buildDeck(deckState.mode);
-    deckState.cursor = 0;
-    setCurrentFromDeck();
-    renderCurrent();
-    updateProgressUI();
+window.addEventListener("load", () => {
+  loadPB(); // 讀取並顯示 PB
 
-  });
+  deckState.mode   = ui.mode.value;          // 依目前選單模式
+  deckState.deck   = buildDeck(deckState.mode);
+  deckState.cursor = 0;
+  setCurrentFromDeck();
+  renderCurrent();
+
+  if (typeof resetSeenLetters === 'function') resetSeenLetters();
+  if (typeof updateProgressUI === 'function') updateProgressUI();
+
+  startTimer(); // 進頁面就開始計時
+});
+// PB 顯示元素
+const pbEl = {
+  edges:   document.getElementById('pbEdges'),
+  corners: document.getElementById('pbCorners'),
+  all:     document.getElementById('pbAll'),
+};
+
+// PB 狀態（毫秒），使用 localStorage 永久保存
+const PB_KEY = 'bldTrainerPB.v1';
+let PB = { edges: null, corners: null, all: null };
+
+function fmtPB(ms){
+  if (ms == null) return '--:--.--';
+  const cs = Math.floor(ms / 10) % 100;
+  const s  = Math.floor(ms / 1000) % 60;
+  const m  = Math.floor(ms / 60000);
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
+}
+function updatePBUI(){
+  if (pbEl.edges)   pbEl.edges.textContent   = fmtPB(PB.edges);
+  if (pbEl.corners) pbEl.corners.textContent = fmtPB(PB.corners);
+  if (pbEl.all)     pbEl.all.textContent     = fmtPB(PB.all);
+}
+function loadPB(){
+  try {
+    const raw = localStorage.getItem(PB_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      PB = { ...PB, ...parsed };
+    }
+  } catch(_) {}
+  updatePBUI();
+}
+function savePB(){
+  try { localStorage.setItem(PB_KEY, JSON.stringify(PB)); } catch(_) {}
+}
+function maybeUpdatePB(mode, elapsedMs){
+  // mode: 'edges' | 'corners' | 'all'
+  if (elapsedMs == null) return;
+  if (PB[mode] == null || elapsedMs < PB[mode]) {
+    PB[mode] = elapsedMs;
+    savePB();
+    updatePBUI();
+  }
+}
+
   // ========== 按鍵提示泡泡 ==========
   function showKeyFlash(text, cls) {
     keyFlash.textContent = text;
@@ -404,6 +481,29 @@ function updateProgressUI() {
     const info = SCHEME[current.mode]?.[current.pos]?.stickers?.[current.face];
     return (info?.letter || "").toUpperCase();
   }
+const timerEl = document.getElementById('timer');
+let timer = null;
+let startTime = 0;
+
+function fmtTime(ms){
+  const cs = Math.floor(ms / 10) % 100;
+  const s  = Math.floor(ms / 1000) % 60;
+  const m  = Math.floor(ms / 60000);
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
+}
+function updateTimer(){
+  const ms = Date.now() - startTime;
+  if (timerEl) timerEl.textContent = fmtTime(ms);
+}
+function startTimer(){
+  stopTimer();
+  startTime = Date.now();
+  timer = setInterval(updateTimer, 31);
+  updateTimer();
+}
+function stopTimer(){
+  if (timer){ clearInterval(timer); timer = null; }
+}
 
 // ====== 取代原本的 keydown / keyup 邏輯 ======
 const keyState = {
