@@ -215,13 +215,6 @@
             </div>
             <div id="progressText" style="min-width:64px; text-align:right;">0/0</div>
         </div>
-
-        <!-- 已出現過的字母 -->
-        <div class="row" style="flex-direction:column; align-items:flex-start;">
-            <div style="opacity:.85; font-weight:700; font-size:12px;">Seen Letters</div>
-            <div class="letters" id="seenLetters"></div>
-        </div>
-
     </div>
 
   </div>
@@ -318,19 +311,28 @@
     return arr;
   }
 
-  function buildDeck(mode){
-    const deck = [];
-    function pushTargets(_mode){
-      for (const pos of ORDER[_mode]) {
-        for (const face of stickerFacesOf(pos)) {
-          deck.push({ mode: _mode, pos, face });
-        }
-      }
+function buildDeck(mode){
+  const deck = [];
+
+  function pushTargets(_mode){
+    for (const pos of ORDER[_mode]) {
+      const faces = stickerFacesOf(pos);
+      // 隨機挑一個 face，而不是全部都加
+      const face = faces[Math.floor(Math.random() * faces.length)];
+      deck.push({ mode: _mode, pos, face });
     }
-    if (mode === "all") { pushTargets("edges"); pushTargets("corners"); }
-    else { pushTargets(mode); }
-    return shuffle(deck);
   }
+
+  if (mode === "all") {
+    pushTargets("edges");
+    pushTargets("corners");
+  } else {
+    pushTargets(mode);
+  }
+
+  return shuffle(deck);
+}
+
 
   const deckState = { mode: "edges", deck: [], cursor: 0 };
 
