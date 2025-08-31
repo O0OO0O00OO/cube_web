@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TUTORIALS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html, body { height: 100%; margin: 0; background: #000; color: #fff; font-family: sans-serif; }
+    .center { height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+    a.back-link { position: absolute; top: 20px; left: 20px; color: #fff; text-decoration: none; }
+    h1 { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); margin: 0; }
+    .box { width: min(60vmin, 300px); height: min(60vmin, 300px); }
+  </style>
+</head>
+<body>
+  <div class="center">
+    <a class="back-link" href="index.html">← Back to Home</a>
+    <h1>BLIND SOLVE</h1>
+
+    <div class="box">
+      <twisty-player id="tp"
+        puzzle="3x3x3"
+        background="none"
+        control-panel="none"
+        experimental-stickering="invisible"
+        style="width:100%; height:100%; display:block;">
+      </twisty-player>
+    </div>
+  </div>
+
+  <script type="module" src="https://cdn.cubing.net/v0/js/cubing/twisty"></script>
+  <script>
+    // 1) 在 Inspector 那頁調到只顯示你要的邊/角
+    // 2) 在右側表格複製「stickeringMask」或「stickeringMaskRequest」的 JSON
+    // 3) 貼到下面這個變數：
+    const mask = {
+      /* ← 貼上你複製的 JSON（原封不動） */
+    };
+
+    const tp = document.getElementById('tp');
+
+    // 方式 A：以 property 指定（建議；最不容易踩到字串轉義問題）
+    tp.stickeringMaskRequest = mask;
+
+    // 方式 B：以屬性字串指定（如果 A 沒作用再試）
+    // tp.setAttribute('stickering-mask', JSON.stringify(mask));
+
+    // （可選）微調視角把那顆放正中央
+    tp.setAttribute('camera-latitude', '20');
+    tp.setAttribute('camera-longitude', '-25');
+
+    // Esc 返回首頁
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>

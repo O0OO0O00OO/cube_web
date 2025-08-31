@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TUTORIALS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background-color: black;
+      color: white;
+      font-family: sans-serif;
+    }
+
+    /* 置中容器 */
+    .center-wrap {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    h1 {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      margin: 0;
+      font-size: 24px;
+    }
+
+    a.back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .cube-box {
+      width: min(60vmin, 300px);
+      height: min(60vmin, 300px);
+    }
+
+    /* ---- Control Panel ---- */
+    .panel {
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    backdrop-filter: blur(6px);
+    }
+    .panel h2 {
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    opacity: .9;
+    }
+    .row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+    select, button {
+    background: rgba(255,255,255,0.08);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    }
+    button.primary { border-color: rgba(255,255,255,0.28); }
+
+    /* 下拉選單 (深色主題) */
+    select {
+        background: rgba(255,255,255,0.08);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    /* 下拉列表中的選項 */
+    select option {
+        background: #111;   /* 下拉背景 */
+        color: white;       /* 文字顏色 */
+    }
+
+    /* 滑過或選中 */
+    select option:hover,
+    select option:checked {
+        background: #333;
+        color: white;
+    }
+/* 按鍵提示泡泡 */
+.key-flash {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 50px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16);
+  color: white;
+  opacity: 0;
+  transition: opacity .12s ease;
+  pointer-events: none;
+}
+.key-flash.show { opacity: 1; }
+.key-flash.ok  { box-shadow: 0 0 16px rgba(0,255,128,.35); color: #33df27; }
+.key-flash.bad { box-shadow: 0 0 16px rgba(255,64,64,.35); color: #FF7C7C; }
+/* 進度條 */
+.progress {
+  position: relative;
+  height: 8px;
+  width: 210px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-bar {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0%;
+  background: linear-gradient(90deg, #58ffa7, #4dc4ff);
+  transition: width .18s ease;
+}
+
+/* 已出現過的字母徽章 */
+.letters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 220px;
+}
+.letters .badge {
+  padding: 4px 6px;
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: white;
+  opacity: .95;
+}
+
+  </style>
+</head>
+<body>
+  <div class="center-wrap">
+    <a class="back-link" href="index.html">← Back to Home</a>
+    <h1>BLIND SOLVE</h1>
+<!-- cube box -->
+    <div class="cube-box">
+      <twisty-player
+        id="twisty"
+        puzzle="3x3x3"
+        background="none"
+        alg=""
+        control-panel="none"
+        hint-facelets="none"
+        camera-latitude-limit="90"
+        experimental-drag-input="none"
+        style="width:100%; height:100%;"
+        
+        camera-latitude="60"
+        camera-longitude="45"
+    
+        experimental-stickering-mask-orbits="EDGES:IIIIIIIIIIII,CORNERS:IIIIIIII,CENTERS:IIIIII"
+      ></twisty-player>
+        <!-- corner45 edge0 -->
+    </div>
+    <div id="keyFlash" class="key-flash"></div>
+
+<!-- Control Panel -->
+    <div class="panel" id="panel">
+        <h2>BLD Trainer</h2>
+
+        <div class="row">
+            <label for="mode">Mode</label>
+            <select id="mode">
+            <option value="edges" >Edges</option>
+            <option value="corners">Corners</option>
+            <option value="all"selected>Edges + Corners</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <label for="scheme">Letter Scheme</label>
+            <select id="scheme">
+            <option value="custom" selected>custom</option>
+            <!-- 之後可在這裡加自訂方案 -->
+            </select>
+        </div>
+
+        <div class="row">
+            <button id="start" class="primary">Start / Reset</button>
+        </div>
+        <!-- 進度 -->
+        <div class="row" style="align-items:center; gap:10px;">
+            <div class="progress" style="flex:1;">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div id="progressText" style="min-width:64px; text-align:right;">0/0</div>
+        </div>
+
+        <!-- 已出現過的字母 -->
+        <div class="row" style="flex-direction:column; align-items:flex-start;">
+            <div style="opacity:.85; font-weight:700; font-size:12px;">Seen Letters</div>
+            <div class="letters" id="seenLetters"></div>
+        </div>
+
+    </div>
+
+  </div>
+
+    <script type="module" src="https://cdn.cubing.net/v0/js/cubing/twisty"></script>
+<script>
+  // ========== Esc 回首頁 ==========
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") window.location.href = "index.html";
+  });
+
+  // ========== 取得 DOM ==========
+  const ui = {
+    mode:   document.getElementById('mode'),
+    scheme: document.getElementById('scheme'),
+    start:  document.getElementById('start'),
+  };
+  const twisty   = document.getElementById("twisty");
+  const keyFlash = document.getElementById('keyFlash');
+    const progressBar  = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const seenWrap     = document.getElementById('seenLetters');
+
+    // 已出現字母（不重複、依出現順序）
+    let seenSet = new Set();
+    let seenList = []; // 只用來保留順序
+
+  // ========== 基礎資料 ==========
+  const ORDER = {
+    edges:   ["UF","UR","UB","UL","DF","DR","DB","DL","FR","FL","BR","BL"],
+    corners: ["UFR","URB","UBL","ULF","DFR","DLF","DBL","DRB"],
+  };
+
+  const SCHEME = {
+    edges: {
+      UF: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "E", setup: "U2 r'" } } },
+      UR: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "M", setup: "R' F'" } } },
+      UB: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "Q", setup: "r'" } } },
+      UL: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "I", setup: "L F" } } },
+      DF: { stickers: { D: { letter: "U", setup: "F2" }, F: { letter: "G", setup: "r" } } },
+      DR: { stickers: { D: { letter: "V", setup: "D' F2" }, R: { letter: "O", setup: "D' r" } } },
+      DB: { stickers: { D: { letter: "W", setup: "M2" }, B: { letter: "S", setup: "M U2" } } },
+      DL: { stickers: { D: { letter: "X", setup: "D F2" }, L: { letter: "K", setup: "D r" } } },
+      FR: { stickers: { F: { letter: "F", setup: "R U" }, R: { letter: "P", setup: "F'" } } },
+      BR: { stickers: { B: { letter: "T", setup: "R' U" }, R: { letter: "N", setup: "R2 F'" } } },
+      BL: { stickers: { B: { letter: "R", setup: "L U'" }, L: { letter: "L", setup: "L2 F" } } },
+      FL: { stickers: { F: { letter: "H", setup: "L' U'" }, L: { letter: "J", setup: "F" } } },
+    },
+    corners: {
+      UFR: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "F", setup: "R U" },   R: { letter: "M", setup: "F' U'" } } },
+      URB: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "N", setup: "R2 F'" }, B: { letter: "Q", setup: "R'" } } },
+      UBL: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "R", setup: "L U'" },  L: { letter: "I", setup: "L F" } } },
+      ULF: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "E", setup: "F2 R" },  F: { letter: "J", setup: "F" } } },
+      DFR: { stickers: { D: { letter: "V", setup: "F2 U'" }, F: { letter: "G", setup: "R" },  R: { letter: "P", setup: "F'" } } },
+      DRB: { stickers: { D: { letter: "W", setup: "R2" }, R: { letter: "O", setup: "R F'" },  B: { letter: "T", setup: "R' U" } } },
+      DBL: { stickers: { D: { letter: "X", setup: "D' R2" }, B: { letter: "S", setup: "D2 R" }, L: { letter: "L", setup: "D2 F'" } } },
+      DLF: { stickers: { D: { letter: "U", setup: "F2" }, L: { letter: "K", setup: "F U'" },  F: { letter: "H", setup: "F' R" } } },
+    }
+  };
+
+  function stickerFacesOf(pos){
+    return Object.keys(
+      (SCHEME.edges[pos]?.stickers) || (SCHEME.corners[pos]?.stickers) || {}
+    );
+  }
+
+  // ========== 遮罩 ==========
+  function makeMask(mode, index) {
+    if (mode === "edges") {
+      const arr = new Array(12).fill("I");
+      arr[index] = "-";
+      return `EDGES:${arr.join("")},CORNERS:IIIIIIII,CENTERS:IIIIII`;
+    } else {
+      const arr = new Array(8).fill("I");
+      arr[index] = "-";
+      return `EDGES:IIIIIIIIIIII,CORNERS:${arr.join("")},CENTERS:IIIIII`;
+    }
+  }
+
+  // ========== 狀態 ==========
+  let current = {
+    mode: "edges",
+    index: 0,
+    pos: null,
+    face: null
+  };
+
+  // ========== 牌組（每題只出一次） ==========
+  function shuffle(arr){
+    for (let i = arr.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function buildDeck(mode){
+    const deck = [];
+    function pushTargets(_mode){
+      for (const pos of ORDER[_mode]) {
+        for (const face of stickerFacesOf(pos)) {
+          deck.push({ mode: _mode, pos, face });
+        }
+      }
+    }
+    if (mode === "all") { pushTargets("edges"); pushTargets("corners"); }
+    else { pushTargets(mode); }
+    return shuffle(deck);
+  }
+
+  const deckState = { mode: "edges", deck: [], cursor: 0 };
+
+  function setCurrentFromDeck(){
+    const card = deckState.deck[deckState.cursor];
+    current.mode  = card.mode;
+    current.pos   = card.pos;
+    current.face  = card.face;
+    current.index = ORDER[current.mode].indexOf(current.pos);
+  }
+
+  function nextCard(){
+    deckState.cursor++;
+    if (deckState.cursor >= deckState.deck.length) {
+      deckState.deck = buildDeck(deckState.mode); // 一輪完 → 重洗
+      deckState.cursor = 0;
+    }
+    setCurrentFromDeck();
+    renderCurrent();
+  }
+
+  // ========== 題目顯示 ==========
+  function renderCurrent() {
+    twisty.setAttribute("experimental-stickering-mask-orbits", makeMask(current.mode, current.index));
+    twisty.setAttribute("camera-longitude", current.mode === "edges" ? "0" : "45");
+    const info = SCHEME[current.mode][current.pos].stickers[current.face];
+    twisty.setAttribute("alg", info.setup || "");
+    // console.log("[BLD] render:", { mode: current.mode, pos: current.pos, face: current.face, letter: info.letter, setup: info.setup, index: current.index });
+  }
+function updateProgressUI() {
+  const total = deckState.deck.length || 0;
+  const done  = Math.min(deckState.cursor, total); // 已完成題數
+  const pct   = total ? Math.round((done / total) * 100) : 0;
+  progressBar.style.width = pct + '%';
+  progressText.textContent = `${done}/${total}`;
+}
+
+function resetSeenLetters() {
+  seenSet.clear();
+  seenList = [];
+  seenWrap.innerHTML = '';
+}
+
+function addSeenLetter(letter) {
+  const L = (letter || '').toUpperCase();
+  if (!L) return;
+  if (seenSet.has(L)) return;
+  seenSet.add(L);
+  seenList.push(L);
+  const span = document.createElement('span');
+  span.className = 'badge';
+  span.textContent = L;
+  seenWrap.appendChild(span);
+}
+
+  // ========== Start / Reset ==========
+  ui.start.addEventListener('click', () => {
+    deckState.mode   = ui.mode.value;          // edges / corners / all
+    deckState.deck   = buildDeck(deckState.mode);
+    deckState.cursor = 0;
+    setCurrentFromDeck();
+    renderCurrent();
+    resetSeenLetters();
+    updateProgressUI(); // 初始 0/總
+
+  });
+  // === 進到頁面自動出第一題 ===
+  window.addEventListener("load", () => {
+    deckState.mode   = ui.mode.value;          // 預設模式依下拉選單
+    deckState.deck   = buildDeck(deckState.mode);
+    deckState.cursor = 0;
+    setCurrentFromDeck();
+    renderCurrent();
+    resetSeenLetters();
+updateProgressUI();
+
+  });
+  // ========== 按鍵提示泡泡 ==========
+  function showKeyFlash(text, cls) {
+    keyFlash.textContent = text;
+    keyFlash.classList.remove('ok', 'bad');
+    if (cls) keyFlash.classList.add(cls);
+    keyFlash.classList.add('show');
+  }
+  function hideKeyFlash() {
+    keyFlash.classList.remove('show', 'ok', 'bad');
+    keyFlash.textContent = '';
+  }
+  function getAnswerLetter() {
+    const info = SCHEME[current.mode]?.[current.pos]?.stickers?.[current.face];
+    return (info?.letter || "").toUpperCase();
+  }
+
+// ====== 取代原本的 keydown / keyup 邏輯 ======
+const keyState = {
+  lastKey: null,              // 最後按下的鍵（大寫）
+  shouldAdvanceOnRelease: false, // 放開時是否要前進
+};
+
+// 按下字母：只判斷並顯示顏色，不換題
+document.addEventListener('keydown', (e) => {
+  if (e.key === "Escape") return;
+  const key = e.key.toUpperCase();
+
+  // 只接受 A–Z；避免長按重覆觸發（Safari/Windows 可能重覆 fire）
+  if (!/^[A-Z]$/.test(key)) return;
+  if (keyState.lastKey === key) return; // 同一顆鍵重複 keydown 不再處理
+
+  keyState.lastKey = key;
+
+  const info = SCHEME[current.mode]?.[current.pos]?.stickers?.[current.face];
+  const ans = (info?.letter || "").toUpperCase();
+
+  if (!ans) {
+    showKeyFlash(key);             // 沒設定字母僅顯示，不評分
+    keyState.shouldAdvanceOnRelease = false;
+    return;
+  }
+
+  if (key === ans) {
+    showKeyFlash(key, 'ok');       // 綠色
+    keyState.shouldAdvanceOnRelease = true;   // 等放開再前進
+  } else {
+    showKeyFlash(key, 'bad');      // 紅色
+    keyState.shouldAdvanceOnRelease = false;  // 錯誤不前進
+  }
+});
+
+// 放開鍵：隱藏泡泡；若剛才那顆是正確解，這時才前進
+document.addEventListener('keyup', (e) => {
+  const key = e.key.toUpperCase();
+  if (!/^[A-Z]$/.test(key)) return;
+  if (key !== keyState.lastKey) return;
+
+  hideKeyFlash();
+
+  if (keyState.shouldAdvanceOnRelease) {
+    // 先把「這一題」的正解字母記錄到已出現清單
+    const info = SCHEME[current.mode]?.[current.pos]?.stickers?.[current.face];
+    const ans  = (info?.letter || "").toUpperCase();
+    addSeenLetter(ans);
+
+    nextCard();         // 換題
+    updateProgressUI(); // 更新進度條/數字
+  }
+
+  keyState.lastKey = null;
+  keyState.shouldAdvanceOnRelease = false;
+});
+
+</script>
+
+
+
+</body>
+</html>
