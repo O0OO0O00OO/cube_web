@@ -252,34 +252,60 @@
     edges:   ["UF","UR","UB","UL","DF","DR","DB","DL","FR","FL","BR","BL"],
     corners: ["UFR","URB","UBL","ULF","DFR","DLF","DBL","DRB"],
   };
-
+  //costume
+  // const SCHEME = {
+  //   edges: {
+  //     UF: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "E", setup: "U2 r'" } } },
+  //     UR: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "M", setup: "R' F'" } } },
+  //     UB: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "Q", setup: "r'" } } },
+  //     UL: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "I", setup: "L F" } } },
+  //     DF: { stickers: { D: { letter: "U", setup: "F2" }, F: { letter: "G", setup: "r" } } },
+  //     DR: { stickers: { D: { letter: "V", setup: "D' F2" }, R: { letter: "O", setup: "D' r" } } },
+  //     DB: { stickers: { D: { letter: "W", setup: "M2" }, B: { letter: "S", setup: "M U2" } } },
+  //     DL: { stickers: { D: { letter: "X", setup: "D F2" }, L: { letter: "K", setup: "D r" } } },
+  //     FR: { stickers: { F: { letter: "F", setup: "R U" }, R: { letter: "P", setup: "F'" } } },
+  //     BR: { stickers: { B: { letter: "T", setup: "R' U" }, R: { letter: "N", setup: "R2 F'" } } },
+  //     BL: { stickers: { B: { letter: "R", setup: "L U'" }, L: { letter: "L", setup: "L2 F" } } },
+  //     FL: { stickers: { F: { letter: "H", setup: "L' U'" }, L: { letter: "J", setup: "F" } } },
+  //   },
+  //   corners: {
+  //     UFR: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "F", setup: "R U" },   R: { letter: "M", setup: "F' U'" } } },
+  //     URB: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "N", setup: "R2 F'" }, B: { letter: "Q", setup: "R'" } } },
+  //     UBL: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "R", setup: "L U'" },  L: { letter: "I", setup: "L F" } } },
+  //     ULF: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "E", setup: "F2 R" },  F: { letter: "J", setup: "F" } } },
+  //     DFR: { stickers: { D: { letter: "V", setup: "F2 U'" }, F: { letter: "G", setup: "R" },  R: { letter: "P", setup: "F'" } } },
+  //     DRB: { stickers: { D: { letter: "W", setup: "R2" }, R: { letter: "O", setup: "R F'" },  B: { letter: "T", setup: "R' U" } } },
+  //     DBL: { stickers: { D: { letter: "X", setup: "D' R2" }, B: { letter: "S", setup: "D2 R" }, L: { letter: "L", setup: "D2 F'" } } },
+  //     DLF: { stickers: { D: { letter: "U", setup: "F2" }, L: { letter: "K", setup: "F U'" },  F: { letter: "H", setup: "F' R" } } },
+  //   }
+  // };
+  //Speffz
   const SCHEME = {
     edges: {
-      UF: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "E", setup: "U2 r'" } } },
+      UF: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "I", setup: "U2 r'" } } },
       UR: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "M", setup: "R' F'" } } },
       UB: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "Q", setup: "r'" } } },
-      UL: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "I", setup: "L F" } } },
-      DF: { stickers: { D: { letter: "U", setup: "F2" }, F: { letter: "G", setup: "r" } } },
+      UL: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "E", setup: "L F" } } },
+      DF: { stickers: { D: { letter: "U", setup: "F2" }, F: { letter: "K", setup: "r" } } },
       DR: { stickers: { D: { letter: "V", setup: "D' F2" }, R: { letter: "O", setup: "D' r" } } },
       DB: { stickers: { D: { letter: "W", setup: "M2" }, B: { letter: "S", setup: "M U2" } } },
-      DL: { stickers: { D: { letter: "X", setup: "D F2" }, L: { letter: "K", setup: "D r" } } },
-      FR: { stickers: { F: { letter: "F", setup: "R U" }, R: { letter: "P", setup: "F'" } } },
+      DL: { stickers: { D: { letter: "X", setup: "D F2" }, L: { letter: "G", setup: "D r" } } },
+      FR: { stickers: { F: { letter: "J", setup: "R U" }, R: { letter: "P", setup: "F'" } } },
       BR: { stickers: { B: { letter: "T", setup: "R' U" }, R: { letter: "N", setup: "R2 F'" } } },
-      BL: { stickers: { B: { letter: "R", setup: "L U'" }, L: { letter: "L", setup: "L2 F" } } },
-      FL: { stickers: { F: { letter: "H", setup: "L' U'" }, L: { letter: "J", setup: "F" } } },
+      BL: { stickers: { B: { letter: "R", setup: "L U'" }, L: { letter: "H", setup: "L2 F" } } },
+      FL: { stickers: { F: { letter: "L", setup: "L' U'" }, L: { letter: "F", setup: "F" } } },
     },
     corners: {
-      UFR: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "F", setup: "R U" },   R: { letter: "M", setup: "F' U'" } } },
+      UFR: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "J", setup: "R U" },   R: { letter: "M", setup: "F' U'" } } },
       URB: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "N", setup: "R2 F'" }, B: { letter: "Q", setup: "R'" } } },
-      UBL: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "R", setup: "L U'" },  L: { letter: "I", setup: "L F" } } },
-      ULF: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "E", setup: "F2 R" },  F: { letter: "J", setup: "F" } } },
-      DFR: { stickers: { D: { letter: "V", setup: "F2 U'" }, F: { letter: "G", setup: "R" },  R: { letter: "P", setup: "F'" } } },
+      UBL: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "R", setup: "L U'" },  L: { letter: "E", setup: "L F" } } },
+      ULF: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "F", setup: "F2 R" },  F: { letter: "I", setup: "F" } } },
+      DFR: { stickers: { D: { letter: "V", setup: "F2 U'" }, F: { letter: "K", setup: "R" },  R: { letter: "P", setup: "F'" } } },
       DRB: { stickers: { D: { letter: "W", setup: "R2" }, R: { letter: "O", setup: "R F'" },  B: { letter: "T", setup: "R' U" } } },
-      DBL: { stickers: { D: { letter: "X", setup: "D' R2" }, B: { letter: "S", setup: "D2 R" }, L: { letter: "L", setup: "D2 F'" } } },
-      DLF: { stickers: { D: { letter: "U", setup: "F2" }, L: { letter: "K", setup: "F U'" },  F: { letter: "H", setup: "F' R" } } },
+      DBL: { stickers: { D: { letter: "X", setup: "D' R2" }, B: { letter: "S", setup: "D2 R" }, L: { letter: "H", setup: "D2 F'" } } },
+      DLF: { stickers: { D: { letter: "U", setup: "F2" }, L: { letter: "G", setup: "F U'" },  F: { letter: "L", setup: "F' R" } } },
     }
   };
-
   function stickerFacesOf(pos){
     return Object.keys(
       (SCHEME.edges[pos]?.stickers) || (SCHEME.corners[pos]?.stickers) || {}
