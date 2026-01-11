@@ -187,16 +187,16 @@
         <div class="row">
             <label for="mode">Mode</label>
             <select id="mode">
-            <option value="edges" >Edges</option>
+            <option value="edges" selected>Edges</option>
             <option value="corners">Corners</option>
-            <option value="all"selected>Edges + Corners</option>
+            <option value="all">Edges + Corners</option>
             </select>
         </div>
 
         <div class="row">
             <label for="scheme">Letter Scheme</label>
             <select id="scheme">
-            <option value="custom" selected>custom</option>
+            <option value="custom" selected>Speffz</option>
             <!-- 之後可在這裡加自訂方案 -->
             </select>
         </div>
@@ -242,19 +242,20 @@
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") window.location.href = "index.html";
   });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === ' ') {
-      e.preventDefault();        // 避免頁面捲動
-      ui.start.click();          // 觸發 Start/Reset
-    }
-  });
-
   // ========== 取得 DOM ==========
   const ui = {
     mode:   document.getElementById('mode'),
     scheme: document.getElementById('scheme'),
     start:  document.getElementById('start'),
   };
+  // 空白鍵 = Start/Reset（放在 ui 定義之後）
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ') {
+      e.preventDefault();   // 避免頁面捲動
+      ui.start.click();     // 觸發 Start/Reset
+    }
+  });
+
   const twisty   = document.getElementById("twisty");
   const keyFlash = document.getElementById('keyFlash');
     const progressBar  = document.getElementById('progressBar');
@@ -317,7 +318,7 @@
       UFR: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "J", setup: "R U" },   R: { letter: "M", setup: "F' U'" } } },
       URB: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "N", setup: "R2 F'" }, B: { letter: "Q", setup: "R'" } } },
       UBL: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "R", setup: "L U'" },  L: { letter: "E", setup: "L F" } } },
-      ULF: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "F", setup: "F2 R" },  F: { letter: "I", setup: "F" } } },
+      ULF: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "F", setup: "F" },  F: { letter: "I", setup: "F2 R" } } },
       DFR: { stickers: { D: { letter: "V", setup: "F2 U'" }, F: { letter: "K", setup: "R" },  R: { letter: "P", setup: "F'" } } },
       DRB: { stickers: { D: { letter: "W", setup: "R2" }, R: { letter: "O", setup: "R F'" },  B: { letter: "T", setup: "R' U" } } },
       DBL: { stickers: { D: { letter: "X", setup: "D' R2" }, B: { letter: "S", setup: "D2 R" }, L: { letter: "H", setup: "D2 F'" } } },
@@ -449,11 +450,14 @@ function updateProgressUI() {
     updateProgressUI(); // 初始 0/總
 
   });
-  // === 進到頁面自動出第一題 ===
+// === 進到頁面自動出第一題（不自動開始計時） ===
 window.addEventListener("load", () => {
   loadPB(); // 讀取並顯示 PB
 
-  deckState.mode   = ui.mode.value;          // 依目前選單模式
+  // 進頁面時固定預設為 edges（即使 HTML 忘了 selected 也會被強制）
+  ui.mode.value = "edges";
+
+  deckState.mode   = ui.mode.value;          // edges
   deckState.deck   = buildDeck(deckState.mode);
   deckState.cursor = 0;
   setCurrentFromDeck();
@@ -462,8 +466,10 @@ window.addEventListener("load", () => {
   if (typeof resetSeenLetters === 'function') resetSeenLetters();
   if (typeof updateProgressUI === 'function') updateProgressUI();
 
-  startTimer(); // 進頁面就開始計時
+  // 不要自動開始計時
+  if (timerEl) timerEl.textContent = "00:00.00";
 });
+
 // PB 顯示元素
 const pbEl = {
   edges:   document.getElementById('pbEdges'),
