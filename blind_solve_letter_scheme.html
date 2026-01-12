@@ -13,7 +13,6 @@
       font-family: sans-serif;
     }
 
-    /* 置中容器 */
     .center-wrap {
       height: 100%;
       display: flex;
@@ -45,120 +44,130 @@
       height: min(60vmin, 300px);
     }
 
-    /* ---- Control Panel ---- */
     .panel {
-    position: absolute;
-    right: 14px;
-    top: 14px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    padding: 10px 12px;
-    border-radius: 10px;
-    font-size: 12px;
-    backdrop-filter: blur(6px);
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      backdrop-filter: blur(6px);
     }
     .panel h2 {
-    margin: 0 0 8px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .5px;
-    opacity: .9;
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      opacity: .9;
     }
     .row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
     select, button {
-    background: rgba(255,255,255,0.08);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.16);
-    border-radius: 8px;
-    padding: 6px 8px;
-    font-size: 12px;
-    cursor: pointer;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 12px;
+      cursor: pointer;
     }
     button.primary { border-color: rgba(255,255,255,0.28); }
 
-    /* 下拉選單 (深色主題) */
     select {
-        background: rgba(255,255,255,0.08);
-        color: white;
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 6px;
-        padding: 4px 8px;
-        font-size: 12px;
-        cursor: pointer;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
     }
-
-    /* 下拉列表中的選項 */
     select option {
-        background: #111;   /* 下拉背景 */
-        color: white;       /* 文字顏色 */
+      background: #111;
+      color: white;
     }
-
-    /* 滑過或選中 */
     select option:hover,
     select option:checked {
-        background: #333;
-        color: white;
+      background: #333;
+      color: white;
     }
-/* 按鍵提示泡泡 */
-.key-flash {
-  position: absolute;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-size: 50px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.16);
-  color: white;
-  opacity: 0;
-  transition: opacity .12s ease;
-  pointer-events: none;
-}
-.key-flash.show { opacity: 1; }
-.key-flash.ok  { box-shadow: 0 0 16px rgba(0,255,128,.35); color: #33df27; }
-.key-flash.bad { box-shadow: 0 0 16px rgba(255,64,64,.35); color: #FF7C7C; }
-/* 進度條 */
-.progress {
-  position: relative;
-  height: 8px;
-  width: 210px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.16);
-  border-radius: 999px;
-  overflow: hidden;
-}
-.progress-bar {
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 0%;
-  background: linear-gradient(90deg, #58ffa7, #4dc4ff);
-  transition: width .18s ease;
-}
-#pbEdges, #pbCorners, #pbAll { font-weight: 700; }
 
-.br-text {
-  position: absolute;
-  right: 14px;
-  bottom: 14px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  backdrop-filter: blur(6px);
-  font-size: 24px;
-  line-height: 1.4;
-  white-space: pre-wrap;
-}
+    .panel input[type="checkbox"]{
+      width: 14px;
+      height: 14px;
+      accent-color: #58ffa7;
+    }
 
+    .key-flash {
+      position: absolute;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 50px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      color: white;
+      opacity: 0;
+      transition: opacity .12s ease;
+      pointer-events: none;
+    }
+    .key-flash.show { opacity: 1; }
+    .key-flash.ok  { box-shadow: 0 0 16px rgba(0,255,128,.35); color: #33df27; }
+    .key-flash.bad { box-shadow: 0 0 16px rgba(255,64,64,.35); color: #FF7C7C; }
 
+    .progress {
+      position: relative;
+      height: 8px;
+      width: 210px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 0%;
+      background: linear-gradient(90deg, #58ffa7, #4dc4ff);
+      transition: width .18s ease;
+    }
+    #pbEdges, #pbCorners, #pbAll { font-weight: 700; }
+
+    .br-text {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      backdrop-filter: blur(6px);
+      font-size: 24px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    #memoryModal button {
+      background: rgba(255,255,255,0.08);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    #memoryModal button.primary { border-color: rgba(255,255,255,0.28); }
   </style>
 </head>
+
 <body>
   <div class="center-wrap">
     <a class="back-link" href="index.html">← Back to Home</a>
     <h1>BLIND SOLVE LETTER SCHEME</h1>
-<!-- cube box -->
+
     <div class="cube-box">
       <twisty-player
         id="twisty"
@@ -170,449 +179,526 @@
         camera-latitude-limit="90"
         experimental-drag-input="none"
         style="width:100%; height:100%;"
-        
         camera-latitude="60"
         camera-longitude="45"
-    
         experimental-stickering-mask-orbits="EDGES:IIIIIIIIIIII,CORNERS:IIIIIIII,CENTERS:IIIIII"
       ></twisty-player>
-        <!-- corner45 edge0 -->
     </div>
+
     <div id="keyFlash" class="key-flash"></div>
 
-<!-- Control Panel -->
     <div class="panel" id="panel">
-        <h2>BLD Trainer</h2>
+      <h2>BLD Trainer</h2>
 
-        <div class="row">
-            <label for="mode">Mode</label>
-            <select id="mode">
-            <option value="edges" selected>Edges</option>
-            <option value="corners">Corners</option>
-            <option value="all">Edges + Corners</option>
-            </select>
-        </div>
+      <div class="row">
+        <label for="mode">Mode</label>
+        <select id="mode">
+          <option value="edges" selected>Edges</option>
+          <option value="corners">Corners</option>
+          <option value="all">Edges + Corners</option>
+        </select>
+      </div>
 
-        <div class="row">
-            <label for="scheme">Letter Scheme</label>
-            <select id="scheme">
-            <option value="custom" selected>Speffz</option>
-            <!-- 之後可在這裡加自訂方案 -->
-            </select>
-        </div>
+      <div class="row">
+        <label for="scheme">Letter Scheme</label>
+        <select id="scheme">
+          <option value="custom" selected>Speffz</option>
+        </select>
+      </div>
 
-        <div class="row">
-            <button id="start" class="primary">Start / Reset</button>
-        </div>
-        <!-- 計時器 -->
-        <div class="row">
-          <div style="opacity:.85; font-weight:700;">Time</div>
-          <div id="timer" style="margin-left:8px;">00:00.00</div>
-        </div>
-        <!-- Personal Best -->
-        <div class="row" style="flex-direction:column; align-items:flex-start;">
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <div>Edges: <span id="pbEdges">--:--.--</span></div>
-            <div>Corners: <span id="pbCorners">--:--.--</span></div>
-            <div>All: <span id="pbAll">--:--.--</span></div>
-          </div>
-        </div>
+      <div class="row">
+        <label for="memory">Memory</label>
+        <input type="checkbox" id="memory" />
+      </div>
 
-        <!-- 進度 -->
-        <div class="row" style="align-items:center; gap:10px;">
-            <div class="progress" style="flex:1;">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <div id="progressText" style="min-width:64px; text-align:right;">0/0</div>
+      <div class="row">
+        <button id="start" class="primary">Start / Reset</button>
+      </div>
+
+      <div class="row">
+        <div style="opacity:.85; font-weight:700;">Time</div>
+        <div id="timer" style="margin-left:8px;">00:00.00</div>
+      </div>
+
+      <div class="row" style="flex-direction:column; align-items:flex-start;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div>Edges: <span id="pbEdges">--:--.--</span></div>
+          <div>Corners: <span id="pbCorners">--:--.--</span></div>
+          <div>All: <span id="pbAll">--:--.--</span></div>
         </div>
+      </div>
+
+      <div class="row" style="align-items:center; gap:10px;">
+        <div class="progress" style="flex:1;">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div id="progressText" style="min-width:64px; text-align:right;">0/0</div>
+      </div>
     </div>
-<!--speffz color scheme-->
-<div class="br-text">
-  <span style="color: #ffffff;">A</span><span style="color: #0000ff;">Q</span>    <span style="color: #00ff00;">K</span><span style="color: #ffff00;">U</span>    <span style="color: #ff8800;">F</span><span style="color: #00ff00;">L</span>
-  <span style="color: #ffffff;">B</span><span style="color: #ff0000;">M</span>    <span style="color: #ff0000;">O</span><span style="color: #ffff00;">V</span>    <span style="color: #0000ff;">R</span><span style="color: #ff8800;">H</span>
-  <span style="color: #ffffff;">C</span><span style="color: #00ff00;">I</span>     <span style="color: #0000ff;">S</span><span style="color: #ffff00;">W</span>    <span style="color: #0000ff;">T</span><span style="color: #ff0000;">N</span>
-  <span style="color: #ffffff;">D</span><span style="color: #ff8800;">E</span>    <span style="color: #ff8800;">G</span><span style="color: #ffff00;">X</span>    <span style="color: #00ff00;">J</span><span style="color: #ff0000;">P</span>
-</div>
 
+    <div class="br-text">
+      <span style="color: #ffffff;">A</span><span style="color: #0000ff;">Q</span>    <span style="color: #00ff00;">K</span><span style="color: #ffff00;">U</span>    <span style="color: #ff8800;">F</span><span style="color: #00ff00;">L</span>
+      <span style="color: #ffffff;">B</span><span style="color: #ff0000;">M</span>    <span style="color: #ff0000;">O</span><span style="color: #ffff00;">V</span>    <span style="color: #0000ff;">R</span><span style="color: #ff8800;">H</span>
+      <span style="color: #ffffff;">C</span><span style="color: #00ff00;">I</span>     <span style="color: #0000ff;">S</span><span style="color: #ffff00;">W</span>    <span style="color: #0000ff;">T</span><span style="color: #ff0000;">N</span>
+      <span style="color: #ffffff;">D</span><span style="color: #ff8800;">E</span>    <span style="color: #ff8800;">G</span><span style="color: #ffff00;">X</span>    <span style="color: #00ff00;">J</span><span style="color: #ff0000;">P</span>
+
+      <span style="color: #ffffff;">A</span><span style="color: #0000ff;">R</span><span style="color: #ff8800;">E</span>  <span style="color: #ffffff;">B</span><span style="color: #ff0000;">N</span><span style="color: #0000ff;">Q</span>
+      <span style="color: #00ff00;">I</span><span style="color: #ffffff;">D</span><span style="color: #ff8800;">F</span>   <span style="color: #ff0000;">M</span><span style="color: #00ff00;">J</span><span style="color: #ffffff;">C</span>
+      <span style="color: #0000ff;">S</span><span style="color: #ff8800;">H</span><span style="color: #ffff00;">X</span>  <span style="color: #0000ff;">T</span><span style="color: #ff0000;">O</span><span style="color: #ffff00;">W</span>
+      <span style="color: #ff8800;">G</span><span style="color: #ffff00;">U</span><span style="color: #00ff00;">L</span>  <span style="color: #00ff00;">K</span><span style="color: #ff0000;">P</span><span style="color: #ffff00;">V</span>
+    </div>
   </div>
 
-    <script type="module" src="https://cdn.cubing.net/v0/js/cubing/twisty"></script>
-<script>
-  // ========== Esc 回首頁 ==========
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") window.location.href = "index.html";
-  });
-  // ========== 取得 DOM ==========
-  const ui = {
-    mode:   document.getElementById('mode'),
-    scheme: document.getElementById('scheme'),
-    start:  document.getElementById('start'),
-  };
-  // 空白鍵 = Start/Reset（放在 ui 定義之後）
-  document.addEventListener('keydown', (e) => {
-    if (e.key === ' ') {
-      e.preventDefault();   // 避免頁面捲動
-      ui.start.click();     // 觸發 Start/Reset
-    }
-  });
+  <!-- Memory Modal -->
+  <div id="memoryModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter: blur(6px); z-index:9999;">
+    <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(520px, 92vw);
+                background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.16); border-radius:14px; padding:16px;">
+      <div style="font-weight:800; letter-spacing:.5px; margin-bottom:10px;">Memory Recall</div>
+      <div style="opacity:.85; margin-bottom:10px; line-height:1.35;">
+        請輸入這一輪的作答字母序列（可含空白），正確才會停表。<br/>
+        按 Cancel 視為沒有 memory（用 normal PB 記錄）。
+      </div>
 
-  const twisty   = document.getElementById("twisty");
-  const keyFlash = document.getElementById('keyFlash');
+      <input id="memoryInput" type="text"
+             style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:10px;
+                    background:rgba(0,0,0,.35); color:white; border:1px solid rgba(255,255,255,0.18);
+                    font-size:16px; letter-spacing:2px;"
+             autocomplete="off" spellcheck="false" />
+
+      <div id="memoryHint" style="margin-top:10px; min-height:18px; font-weight:700;"></div>
+
+      <div style="display:flex; gap:10px; margin-top:12px; justify-content:flex-end;">
+        <button id="memoryCancel">Cancel</button>
+        <button id="memorySubmit" class="primary">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="https://cdn.cubing.net/v0/js/cubing/twisty"></script>
+  <script>
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") window.location.href = "index.html";
+    });
+
+    const ui = {
+      mode:   document.getElementById('mode'),
+      scheme: document.getElementById('scheme'),
+      memory: document.getElementById('memory'),
+      start:  document.getElementById('start'),
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ') {
+        if (isMemoryModalOpen()) return;
+        e.preventDefault();
+        ui.start.click();
+      }
+    });
+
+    const twisty   = document.getElementById("twisty");
+    const keyFlash = document.getElementById('keyFlash');
     const progressBar  = document.getElementById('progressBar');
     const progressText = document.getElementById('progressText');
-    const seenWrap     = document.getElementById('seenLetters');
 
-    // 已出現字母（不重複、依出現順序）
-    let seenSet = new Set();
-    let seenList = []; // 只用來保留順序
+    const ORDER = {
+      edges:   ["UF","UR","UB","UL","DF","DR","DB","DL","FR","FL","BR","BL"],
+      corners: ["UFR","URB","UBL","ULF","DFR","DLF","DBL","DRB"],
+    };
 
-  // ========== 基礎資料 ==========
-  const ORDER = {
-    edges:   ["UF","UR","UB","UL","DF","DR","DB","DL","FR","FL","BR","BL"],
-    corners: ["UFR","URB","UBL","ULF","DFR","DLF","DBL","DRB"],
-  };
-  //costume
-  // const SCHEME = {
-  //   edges: {
-  //     UF: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "E", setup: "U2 r'" } } },
-  //     UR: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "M", setup: "R' F'" } } },
-  //     UB: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "Q", setup: "r'" } } },
-  //     UL: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "I", setup: "L F" } } },
-  //     DF: { stickers: { D: { letter: "U", setup: "F2" }, F: { letter: "G", setup: "r" } } },
-  //     DR: { stickers: { D: { letter: "V", setup: "D' F2" }, R: { letter: "O", setup: "D' r" } } },
-  //     DB: { stickers: { D: { letter: "W", setup: "M2" }, B: { letter: "S", setup: "M U2" } } },
-  //     DL: { stickers: { D: { letter: "X", setup: "D F2" }, L: { letter: "K", setup: "D r" } } },
-  //     FR: { stickers: { F: { letter: "F", setup: "R U" }, R: { letter: "P", setup: "F'" } } },
-  //     BR: { stickers: { B: { letter: "T", setup: "R' U" }, R: { letter: "N", setup: "R2 F'" } } },
-  //     BL: { stickers: { B: { letter: "R", setup: "L U'" }, L: { letter: "L", setup: "L2 F" } } },
-  //     FL: { stickers: { F: { letter: "H", setup: "L' U'" }, L: { letter: "J", setup: "F" } } },
-  //   },
-  //   corners: {
-  //     UFR: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "F", setup: "R U" },   R: { letter: "M", setup: "F' U'" } } },
-  //     URB: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "N", setup: "R2 F'" }, B: { letter: "Q", setup: "R'" } } },
-  //     UBL: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "R", setup: "L U'" },  L: { letter: "I", setup: "L F" } } },
-  //     ULF: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "E", setup: "F2 R" },  F: { letter: "J", setup: "F" } } },
-  //     DFR: { stickers: { D: { letter: "V", setup: "F2 U'" }, F: { letter: "G", setup: "R" },  R: { letter: "P", setup: "F'" } } },
-  //     DRB: { stickers: { D: { letter: "W", setup: "R2" }, R: { letter: "O", setup: "R F'" },  B: { letter: "T", setup: "R' U" } } },
-  //     DBL: { stickers: { D: { letter: "X", setup: "D' R2" }, B: { letter: "S", setup: "D2 R" }, L: { letter: "L", setup: "D2 F'" } } },
-  //     DLF: { stickers: { D: { letter: "U", setup: "F2" }, L: { letter: "K", setup: "F U'" },  F: { letter: "H", setup: "F' R" } } },
-  //   }
-  // };
-  //Speffz
-  const SCHEME = {
-    edges: {
-      UF: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "I", setup: "U2 r'" } } },
-      UR: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "M", setup: "R' F'" } } },
-      UB: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "Q", setup: "r'" } } },
-      UL: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "E", setup: "L F" } } },
-      DF: { stickers: { D: { letter: "U", setup: "F2" }, F: { letter: "K", setup: "r" } } },
-      DR: { stickers: { D: { letter: "V", setup: "D' F2" }, R: { letter: "O", setup: "D' r" } } },
-      DB: { stickers: { D: { letter: "W", setup: "M2" }, B: { letter: "S", setup: "M U2" } } },
-      DL: { stickers: { D: { letter: "X", setup: "D F2" }, L: { letter: "G", setup: "D r" } } },
-      FR: { stickers: { F: { letter: "J", setup: "R U" }, R: { letter: "P", setup: "F'" } } },
-      BR: { stickers: { B: { letter: "T", setup: "R' U" }, R: { letter: "N", setup: "R2 F'" } } },
-      BL: { stickers: { B: { letter: "R", setup: "L U'" }, L: { letter: "H", setup: "L2 F" } } },
-      FL: { stickers: { F: { letter: "L", setup: "L' U'" }, L: { letter: "F", setup: "F" } } },
-    },
-    corners: {
-      UFR: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "J", setup: "R U" },   R: { letter: "M", setup: "F' U'" } } },
-      URB: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "N", setup: "R2 F'" }, B: { letter: "Q", setup: "R'" } } },
-      UBL: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "R", setup: "L U'" },  L: { letter: "E", setup: "L F" } } },
-      ULF: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "F", setup: "F" },  F: { letter: "I", setup: "F2 R" } } },
-      DFR: { stickers: { D: { letter: "V", setup: "F2 U'" }, F: { letter: "K", setup: "R" },  R: { letter: "P", setup: "F'" } } },
-      DRB: { stickers: { D: { letter: "W", setup: "R2" }, R: { letter: "O", setup: "R F'" },  B: { letter: "T", setup: "R' U" } } },
-      DBL: { stickers: { D: { letter: "X", setup: "D' R2" }, B: { letter: "S", setup: "D2 R" }, L: { letter: "H", setup: "D2 F'" } } },
-      DLF: { stickers: { D: { letter: "U", setup: "F2" }, L: { letter: "G", setup: "F U'" },  F: { letter: "L", setup: "F' R" } } },
+    const SCHEME = {
+      edges: {
+        UF: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "I", setup: "U2 r'" } } },
+        UR: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "M", setup: "R' F'" } } },
+        UB: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "Q", setup: "r'" } } },
+        UL: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "E", setup: "L F" } } },
+        DF: { stickers: { D: { letter: "U", setup: "F2" }, F: { letter: "K", setup: "r" } } },
+        DR: { stickers: { D: { letter: "V", setup: "D' F2" }, R: { letter: "O", setup: "D' r" } } },
+        DB: { stickers: { D: { letter: "W", setup: "M2" }, B: { letter: "S", setup: "M U2" } } },
+        DL: { stickers: { D: { letter: "X", setup: "D F2" }, L: { letter: "G", setup: "D r" } } },
+        FR: { stickers: { F: { letter: "J", setup: "R U" }, R: { letter: "P", setup: "F'" } } },
+        BR: { stickers: { B: { letter: "T", setup: "R' U" }, R: { letter: "N", setup: "R2 F'" } } },
+        BL: { stickers: { B: { letter: "R", setup: "L U'" }, L: { letter: "H", setup: "L2 F" } } },
+        FL: { stickers: { F: { letter: "L", setup: "L' U'" }, L: { letter: "F", setup: "F" } } },
+      },
+      corners: {
+        UFR: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "J", setup: "R U" },   R: { letter: "M", setup: "F' U'" } } },
+        URB: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "N", setup: "R2 F'" }, B: { letter: "Q", setup: "R'" } } },
+        UBL: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "R", setup: "L U'" },  L: { letter: "E", setup: "L F" } } },
+        ULF: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "F", setup: "F" },     F: { letter: "I", setup: "F2 R" } } },
+        DFR: { stickers: { D: { letter: "V", setup: "F2 U'" }, F: { letter: "K", setup: "R" },  R: { letter: "P", setup: "F'" } } },
+        DRB: { stickers: { D: { letter: "W", setup: "R2" },   R: { letter: "O", setup: "R F'" }, B:{ letter: "T", setup: "R' U" } } },
+        DBL: { stickers: { D: { letter: "X", setup: "D' R2" }, B: { letter: "S", setup: "D2 R" }, L:{ letter: "H", setup: "D2 F'" } } },
+        DLF: { stickers: { D: { letter: "U", setup: "F2" },    L: { letter: "G", setup: "F U'" }, F:{ letter: "L", setup: "F' R" } } },
+      }
+    };
+
+    function stickerFacesOf(pos){
+      return Object.keys(
+        (SCHEME.edges[pos]?.stickers) || (SCHEME.corners[pos]?.stickers) || {}
+      );
     }
-  };
-  function stickerFacesOf(pos){
-    return Object.keys(
-      (SCHEME.edges[pos]?.stickers) || (SCHEME.corners[pos]?.stickers) || {}
-    );
-  }
 
-  // ========== 遮罩 ==========
-  function makeMask(mode, index) {
-    if (mode === "edges") {
-      const arr = new Array(12).fill("I");
-      arr[index] = "-";
-      return `EDGES:${arr.join("")},CORNERS:IIIIIIII,CENTERS:IIIIII`;
-    } else {
-      const arr = new Array(8).fill("I");
-      arr[index] = "-";
-      return `EDGES:IIIIIIIIIIII,CORNERS:${arr.join("")},CENTERS:IIIIII`;
+    function makeMask(mode, index) {
+      if (mode === "edges") {
+        const arr = new Array(12).fill("I");
+        arr[index] = "-";
+        return `EDGES:${arr.join("")},CORNERS:IIIIIIII,CENTERS:IIIIII`;
+      } else {
+        const arr = new Array(8).fill("I");
+        arr[index] = "-";
+        return `EDGES:IIIIIIIIIIII,CORNERS:${arr.join("")},CENTERS:IIIIII`;
+      }
     }
-  }
 
-  // ========== 狀態 ==========
-  let current = {
-    mode: "edges",
-    index: 0,
-    pos: null,
-    face: null
-  };
+    let current = { mode: "edges", index: 0, pos: null, face: null };
 
-  // ========== 牌組（每題只出一次） ==========
-  function shuffle(arr){
-    for (let i = arr.length - 1; i > 0; i--){
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+    function shuffle(arr){
+      for (let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
     }
-    return arr;
-  }
 
-function buildDeck(mode){
-  const deck = [];
+    function buildDeck(mode){
+      const deck = [];
 
-  function pushTargets(_mode){
-    for (const pos of ORDER[_mode]) {
-      const faces = stickerFacesOf(pos);
-      // 隨機挑一個 face，而不是全部都加
-      const face = faces[Math.floor(Math.random() * faces.length)];
-      deck.push({ mode: _mode, pos, face });
+      function pushTargets(_mode){
+        for (const pos of ORDER[_mode]) {
+          const faces = stickerFacesOf(pos);
+          const face = faces[Math.floor(Math.random() * faces.length)];
+          deck.push({ mode: _mode, pos, face });
+        }
+      }
+
+      if (mode === "all") {
+        pushTargets("edges");
+        pushTargets("corners");
+      } else {
+        pushTargets(mode);
+      }
+
+      return shuffle(deck);
     }
-  }
 
-  if (mode === "all") {
-    pushTargets("edges");
-    pushTargets("corners");
-  } else {
-    pushTargets(mode);
-  }
+    const deckState = { mode: "edges", deck: [], cursor: 0 };
 
-  return shuffle(deck);
-}
-
-
-  const deckState = { mode: "edges", deck: [], cursor: 0 };
-
-  function setCurrentFromDeck(){
-    const card = deckState.deck[deckState.cursor];
-    current.mode  = card.mode;
-    current.pos   = card.pos;
-    current.face  = card.face;
-    current.index = ORDER[current.mode].indexOf(current.pos);
-  }
-
-function nextCard(){
-  // 完成這題，移到下一題
-  deckState.cursor++;
-
-  const total = deckState.deck.length;
-
-  if (deckState.cursor >= total) {
-    // 一輪完成：停表 + 紀錄 PB（依目前模式）
-    if (typeof updateProgressUI === 'function') updateProgressUI();
-    stopTimer();
-
-    // 這一輪耗時（毫秒）
-    const elapsed = Date.now() - startTime;
-    maybeUpdatePB(deckState.mode, elapsed);
-
-    // 不自動重洗；等你按 Start/空白鍵重開新一輪
-    return;
-  }
-
-  setCurrentFromDeck();
-  renderCurrent();
-  if (typeof updateProgressUI === 'function') updateProgressUI();
-}
-
-
-  // ========== 題目顯示 ==========
-  function renderCurrent() {
-    twisty.setAttribute("experimental-stickering-mask-orbits", makeMask(current.mode, current.index));
-    twisty.setAttribute("camera-longitude", current.mode === "edges" ? "0" : "45");
-    const info = SCHEME[current.mode][current.pos].stickers[current.face];
-    twisty.setAttribute("alg", info.setup || "");
-    // console.log("[BLD] render:", { mode: current.mode, pos: current.pos, face: current.face, letter: info.letter, setup: info.setup, index: current.index });
-  }
-function updateProgressUI() {
-  const total = deckState.deck.length || 0;
-  const done  = Math.min(deckState.cursor, total); // 已完成題數
-  const pct   = total ? Math.round((done / total) * 100) : 0;
-  progressBar.style.width = pct + '%';
-  progressText.textContent = `${done}/${total}`;
-}
-  // ========== Start / Reset ==========
-  ui.start.addEventListener('click', () => {
-    deckState.mode   = ui.mode.value;          // edges / corners / all
-    deckState.deck   = buildDeck(deckState.mode);
-    deckState.cursor = 0;
-    setCurrentFromDeck();
-    renderCurrent();
-        // 重設進度/已見字母（若你有那段 UI 的話）
-    if (typeof updateProgressUI === 'function') updateProgressUI();
-
-    // 開始計時
-    startTimer();
-
-    updateProgressUI(); // 初始 0/總
-
-  });
-// === 進到頁面自動出第一題（不自動開始計時） ===
-window.addEventListener("load", () => {
-  loadPB(); // 讀取並顯示 PB
-
-  // 進頁面時固定預設為 edges（即使 HTML 忘了 selected 也會被強制）
-  ui.mode.value = "edges";
-
-  deckState.mode   = ui.mode.value;          // edges
-  deckState.deck   = buildDeck(deckState.mode);
-  deckState.cursor = 0;
-  setCurrentFromDeck();
-  renderCurrent();
-
-  if (typeof resetSeenLetters === 'function') resetSeenLetters();
-  if (typeof updateProgressUI === 'function') updateProgressUI();
-
-  // 不要自動開始計時
-  if (timerEl) timerEl.textContent = "00:00.00";
-});
-
-// PB 顯示元素
-const pbEl = {
-  edges:   document.getElementById('pbEdges'),
-  corners: document.getElementById('pbCorners'),
-  all:     document.getElementById('pbAll'),
-};
-
-// PB 狀態（毫秒），使用 localStorage 永久保存
-const PB_KEY = 'bldTrainerPB.v1';
-let PB = { edges: null, corners: null, all: null };
-
-function fmtPB(ms){
-  if (ms == null) return '--:--.--';
-  const cs = Math.floor(ms / 10) % 100;
-  const s  = Math.floor(ms / 1000) % 60;
-  const m  = Math.floor(ms / 60000);
-  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
-}
-function updatePBUI(){
-  if (pbEl.edges)   pbEl.edges.textContent   = fmtPB(PB.edges);
-  if (pbEl.corners) pbEl.corners.textContent = fmtPB(PB.corners);
-  if (pbEl.all)     pbEl.all.textContent     = fmtPB(PB.all);
-}
-function loadPB(){
-  try {
-    const raw = localStorage.getItem(PB_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      PB = { ...PB, ...parsed };
+    function setCurrentFromDeck(){
+      const card = deckState.deck[deckState.cursor];
+      current.mode  = card.mode;
+      current.pos   = card.pos;
+      current.face  = card.face;
+      current.index = ORDER[current.mode].indexOf(current.pos);
     }
-  } catch(_) {}
-  updatePBUI();
-}
-function savePB(){
-  try { localStorage.setItem(PB_KEY, JSON.stringify(PB)); } catch(_) {}
-}
-function maybeUpdatePB(mode, elapsedMs){
-  // mode: 'edges' | 'corners' | 'all'
-  if (elapsedMs == null) return;
-  if (PB[mode] == null || elapsedMs < PB[mode]) {
-    PB[mode] = elapsedMs;
-    savePB();
-    updatePBUI();
-  }
-}
 
-  // ========== 按鍵提示泡泡 ==========
-  function showKeyFlash(text, cls) {
-    keyFlash.textContent = text;
-    keyFlash.classList.remove('ok', 'bad');
-    if (cls) keyFlash.classList.add(cls);
-    keyFlash.classList.add('show');
-  }
-  function hideKeyFlash() {
-    keyFlash.classList.remove('show', 'ok', 'bad');
-    keyFlash.textContent = '';
-  }
-  function getAnswerLetter() {
-    const info = SCHEME[current.mode]?.[current.pos]?.stickers?.[current.face];
-    return (info?.letter || "").toUpperCase();
-  }
-const timerEl = document.getElementById('timer');
-let timer = null;
-let startTime = 0;
+    function renderCurrent() {
+      twisty.setAttribute("experimental-stickering-mask-orbits", makeMask(current.mode, current.index));
+      twisty.setAttribute("camera-longitude", current.mode === "edges" ? "0" : "45");
+      const info = SCHEME[current.mode][current.pos].stickers[current.face];
+      twisty.setAttribute("alg", info.setup || "");
+    }
 
-function fmtTime(ms){
-  const cs = Math.floor(ms / 10) % 100;
-  const s  = Math.floor(ms / 1000) % 60;
-  const m  = Math.floor(ms / 60000);
-  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
-}
-function updateTimer(){
-  const ms = Date.now() - startTime;
-  if (timerEl) timerEl.textContent = fmtTime(ms);
-}
-function startTimer(){
-  stopTimer();
-  startTime = Date.now();
-  timer = setInterval(updateTimer, 31);
-  updateTimer();
-}
-function stopTimer(){
-  if (timer){ clearInterval(timer); timer = null; }
-}
+    function updateProgressUI() {
+      const total = deckState.deck.length || 0;
+      const done  = Math.min(deckState.cursor, total);
+      const pct   = total ? Math.round((done / total) * 100) : 0;
+      progressBar.style.width = pct + '%';
+      progressText.textContent = `${done}/${total}`;
+    }
 
-// ====== 取代原本的 keydown / keyup 邏輯 ======
-const keyState = {
-  lastKey: null,              // 最後按下的鍵（大寫）
-  shouldAdvanceOnRelease: false, // 放開時是否要前進
-};
+    const timerEl = document.getElementById('timer');
+    let timer = null;
+    let startTime = 0;
 
-// 按下字母：只判斷並顯示顏色，不換題
-document.addEventListener('keydown', (e) => {
-  if (e.key === "Escape") return;
-  const key = e.key.toUpperCase();
+    function fmtTime(ms){
+      const cs = Math.floor(ms / 10) % 100;
+      const s  = Math.floor(ms / 1000) % 60;
+      const m  = Math.floor(ms / 60000);
+      return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
+    }
+    function updateTimer(){
+      const ms = Date.now() - startTime;
+      if (timerEl) timerEl.textContent = fmtTime(ms);
+    }
+    function startTimer(){
+      stopTimer();
+      startTime = Date.now();
+      timer = setInterval(updateTimer, 31);
+      updateTimer();
+    }
+    function stopTimer(){
+      if (timer){ clearInterval(timer); timer = null; }
+    }
 
-  // 只接受 A–Z；避免長按重覆觸發（Safari/Windows 可能重覆 fire）
-  if (!/^[A-Z]$/.test(key)) return;
-  if (keyState.lastKey === key) return; // 同一顆鍵重複 keydown 不再處理
+    const pbEl = {
+      edges:   document.getElementById('pbEdges'),
+      corners: document.getElementById('pbCorners'),
+      all:     document.getElementById('pbAll'),
+    };
 
-  keyState.lastKey = key;
+    const PB_KEY = 'bldTrainerPB.v2';
+    let PB = {
+      normal: { edges: null, corners: null, all: null },
+      memory: { edges: null, corners: null, all: null },
+    };
 
-  const info = SCHEME[current.mode]?.[current.pos]?.stickers?.[current.face];
-  const ans = (info?.letter || "").toUpperCase();
+    function fmtPB(ms){
+      if (ms == null) return '--:--.--';
+      const cs = Math.floor(ms / 10) % 100;
+      const s  = Math.floor(ms / 1000) % 60;
+      const m  = Math.floor(ms / 60000);
+      return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
+    }
 
-  if (!ans) {
-    showKeyFlash(key);             // 沒設定字母僅顯示，不評分
-    keyState.shouldAdvanceOnRelease = false;
-    return;
-  }
+    function getPBSet(){
+      return ui.memory?.checked ? 'memory' : 'normal';
+    }
 
-  if (key === ans) {
-    showKeyFlash(key, 'ok');       // 綠色
-    keyState.shouldAdvanceOnRelease = true;   // 等放開再前進
-  } else {
-    showKeyFlash(key, 'bad');      // 紅色
-    keyState.shouldAdvanceOnRelease = false;  // 錯誤不前進
-  }
-});
+    function updatePBUI(){
+      const set = getPBSet();
+      if (pbEl.edges)   pbEl.edges.textContent   = fmtPB(PB[set].edges);
+      if (pbEl.corners) pbEl.corners.textContent = fmtPB(PB[set].corners);
+      if (pbEl.all)     pbEl.all.textContent     = fmtPB(PB[set].all);
+    }
 
-// 放開鍵：隱藏泡泡；若剛才那顆是正確解，這時才前進
-document.addEventListener('keyup', (e) => {
-  const key = e.key.toUpperCase();
-  if (!/^[A-Z]$/.test(key)) return;
-  if (key !== keyState.lastKey) return;
+    function loadPB(){
+      try {
+        const raw = localStorage.getItem(PB_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          PB.normal = { ...PB.normal, ...(parsed.normal || {}) };
+          PB.memory = { ...PB.memory, ...(parsed.memory || {}) };
+        }
+      } catch(_) {}
+      updatePBUI();
+    }
+    function savePB(){
+      try { localStorage.setItem(PB_KEY, JSON.stringify(PB)); } catch(_) {}
+    }
 
-  hideKeyFlash();
+    function maybeUpdatePB(mode, elapsedMs, forceSet /* 'normal' | 'memory' | null */ = null){
+      if (elapsedMs == null) return;
+      const set = forceSet || getPBSet();
+      if (PB[set][mode] == null || elapsedMs < PB[set][mode]) {
+        PB[set][mode] = elapsedMs;
+        savePB();
+        updatePBUI();
+      }
+    }
 
-  if (keyState.shouldAdvanceOnRelease) {
-    // 先把「這一題」的正解字母記錄到已出現清單
-    const info = SCHEME[current.mode]?.[current.pos]?.stickers?.[current.face];
-    const ans  = (info?.letter || "").toUpperCase();
-    nextCard();         // 換題
-    updateProgressUI(); // 更新進度條/數字
-  }
+    if (ui.memory) ui.memory.addEventListener('change', updatePBUI);
 
-  keyState.lastKey = null;
-  keyState.shouldAdvanceOnRelease = false;
-});
+    const memoryModal  = document.getElementById('memoryModal');
+    const memoryInput  = document.getElementById('memoryInput');
+    const memorySubmit = document.getElementById('memorySubmit');
+    const memoryCancel = document.getElementById('memoryCancel');
+    const memoryHint   = document.getElementById('memoryHint');
 
-</script>
+    let roundAnswers = [];
+    let memoryWaiting = false;
 
+    function isMemoryModalOpen(){
+      return memoryModal && memoryModal.style.display !== 'none';
+    }
 
+    function normalizeRecall(s){
+      return (s || '').toUpperCase().replace(/[^A-Z]/g, '');
+    }
 
+    function openMemoryModal(){
+      if (!memoryModal) return;
+      memoryWaiting = true;
+      memoryHint.textContent = '';
+      memoryHint.style.color = 'white';
+      memoryInput.value = '';
+      memoryModal.style.display = 'block';
+      setTimeout(() => memoryInput.focus(), 0);
+    }
+
+    function closeMemoryModal(){
+      if (!memoryModal) return;
+      memoryModal.style.display = 'none';
+    }
+
+    function finalizeAsNormalFromMemory(){
+      // 視為沒有 memory：停表 & 用 normal PB 更新（並切換 UI 顯示跟著 checkbox）
+      const elapsed = Date.now() - startTime;
+      stopTimer();
+
+      // 強制寫到 normal PB
+      maybeUpdatePB(deckState.mode, elapsed, 'normal');
+
+      memoryWaiting = false;
+      closeMemoryModal();
+    }
+
+    function submitMemoryRecall(){
+      if (!memoryWaiting) return;
+
+      const expected = roundAnswers.join('');
+      const got = normalizeRecall(memoryInput.value);
+
+      if (got === expected) {
+        memoryHint.textContent = 'Correct';
+        memoryHint.style.color = '#58ffa7';
+
+        const elapsed = Date.now() - startTime;
+        stopTimer();
+
+        // 正確：寫到 memory PB
+        maybeUpdatePB(deckState.mode, elapsed, 'memory');
+
+        memoryWaiting = false;
+        closeMemoryModal();
+        return;
+      }
+
+      memoryHint.textContent = `Wrong (${got.length}/${expected.length})`;
+      memoryHint.style.color = '#FF7C7C';
+      memoryInput.select();
+      memoryInput.focus();
+    }
+
+    if (memorySubmit) memorySubmit.addEventListener('click', submitMemoryRecall);
+    if (memoryCancel) memoryCancel.addEventListener('click', finalizeAsNormalFromMemory);
+
+    if (memoryInput) {
+      memoryInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') submitMemoryRecall();
+        // Esc 在 modal 內：同 cancel 行為
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          finalizeAsNormalFromMemory();
+        }
+      });
+    }
+
+    function showKeyFlash(text, cls) {
+      keyFlash.textContent = text;
+      keyFlash.classList.remove('ok', 'bad');
+      if (cls) keyFlash.classList.add(cls);
+      keyFlash.classList.add('show');
+    }
+    function hideKeyFlash() {
+      keyFlash.classList.remove('show', 'ok', 'bad');
+      keyFlash.textContent = '';
+    }
+
+    function nextCard(){
+      deckState.cursor++;
+      const total = deckState.deck.length;
+
+      if (deckState.cursor >= total) {
+        updateProgressUI();
+
+        if (!ui.memory.checked) {
+          stopTimer();
+          const elapsed = Date.now() - startTime;
+          maybeUpdatePB(deckState.mode, elapsed, 'normal');
+          return;
+        }
+
+        openMemoryModal();
+        return;
+      }
+
+      setCurrentFromDeck();
+      renderCurrent();
+      updateProgressUI();
+    }
+
+    ui.start.addEventListener('click', () => {
+      if (isMemoryModalOpen()) {
+        closeMemoryModal();
+        memoryWaiting = false;
+      }
+
+      deckState.mode   = ui.mode.value;
+      deckState.deck   = buildDeck(deckState.mode);
+      deckState.cursor = 0;
+
+      roundAnswers = [];
+
+      setCurrentFromDeck();
+      renderCurrent();
+      updateProgressUI();
+
+      startTimer();
+    });
+
+    window.addEventListener("load", () => {
+      loadPB();
+
+      ui.mode.value = "edges";
+
+      deckState.mode   = ui.mode.value;
+      deckState.deck   = buildDeck(deckState.mode);
+      deckState.cursor = 0;
+
+      roundAnswers = [];
+      memoryWaiting = false;
+      closeMemoryModal();
+
+      setCurrentFromDeck();
+      renderCurrent();
+      updateProgressUI();
+
+      if (timerEl) timerEl.textContent = "00:00.00";
+    });
+
+    const keyState = {
+      lastKey: null,
+      shouldAdvanceOnRelease: false,
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (isMemoryModalOpen()) return;
+      if (e.key === "Escape") return;
+
+      const key = e.key.toUpperCase();
+      if (!/^[A-Z]$/.test(key)) return;
+      if (keyState.lastKey === key) return;
+
+      keyState.lastKey = key;
+
+      const info = SCHEME[current.mode]?.[current.pos]?.stickers?.[current.face];
+      const ans = (info?.letter || "").toUpperCase();
+
+      if (!ans) {
+        showKeyFlash(key);
+        keyState.shouldAdvanceOnRelease = false;
+        return;
+      }
+
+      if (key === ans) {
+        showKeyFlash(key, 'ok');
+        keyState.shouldAdvanceOnRelease = true;
+      } else {
+        showKeyFlash(key, 'bad');
+        keyState.shouldAdvanceOnRelease = false;
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      if (isMemoryModalOpen()) return;
+
+      const key = e.key.toUpperCase();
+      if (!/^[A-Z]$/.test(key)) return;
+      if (key !== keyState.lastKey) return;
+
+      hideKeyFlash();
+
+      if (keyState.shouldAdvanceOnRelease) {
+        const info = SCHEME[current.mode]?.[current.pos]?.stickers?.[current.face];
+        const ans  = (info?.letter || "").toUpperCase();
+        if (ans) roundAnswers.push(ans);
+
+        nextCard();
+      }
+
+      keyState.lastKey = null;
+      keyState.shouldAdvanceOnRelease = false;
+    });
+  </script>
 </body>
 </html>
