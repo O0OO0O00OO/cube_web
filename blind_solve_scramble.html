@@ -73,7 +73,6 @@
   <div id="track"></div>
 
   <button id="new-scramble-btn">New Scramble</button>
-
 <script>
   // =========================
   // DOM
@@ -107,9 +106,16 @@
     twisty.setAttribute("experimental-setup-alg", scramble);
     twisty.alg = "";
 
-    // ✅ 彩色 + 兩兩一組 + 移除箭頭
-    const cycles = bufferMultiCyclesWithCornerCut(scramble);
-    $("track").innerHTML = renderTrackHTML(cycles);
+    const cornerCycles = bufferMultiCyclesWithCornerCut(scramble);
+    const edgeCycles   = bufferMultiCyclesEdgesWithCut(scramble);
+
+    $("track").innerHTML = `
+      <div style="font-size:32px; margin-bottom:10px;">CORNERS</div>
+      <div>${renderTrackHTML(cornerCycles)}</div>
+      <div style="height:18px;"></div>
+      <div style="font-size:32px; margin-bottom:10px;">EDGES</div>
+      <div>${renderTrackHTML(edgeCycles)}</div>
+    `;
   }
 
   function updateScramble() {
@@ -120,27 +126,78 @@
   window.addEventListener("load", updateScramble);
 
   // =========================
-  // Speffz (corners only) - 54 stickers model
+  // BLIND_SCHEME (ignore setup)
+  // =========================
+  const BLIND_SCHEME = {
+    edges: {
+      UF: { stickers: { U: { letter: "C" },   F: { letter: "I" } } },
+      UR: { stickers: { U: { letter: "B" },   R: { letter: "M" } } },
+      UB: { stickers: { U: { letter: "A" },   B: { letter: "Q" } } },
+      UL: { stickers: { U: { letter: "D" },   L: { letter: "E" } } },
+      DF: { stickers: { D: { letter: "U" },   F: { letter: "K" } } },
+      DR: { stickers: { D: { letter: "V" },   R: { letter: "O" } } },
+      DB: { stickers: { D: { letter: "W" },   B: { letter: "S" } } },
+      DL: { stickers: { D: { letter: "X" },   L: { letter: "G" } } },
+      FR: { stickers: { F: { letter: "J" },   R: { letter: "P" } } },
+      BR: { stickers: { B: { letter: "T" },   R: { letter: "N" } } },
+      BL: { stickers: { B: { letter: "R" },   L: { letter: "H" } } },
+      FL: { stickers: { F: { letter: "L" },   L: { letter: "F" } } },
+    },
+    corners: {
+      UFR: { stickers: { U: { letter: "C" },   F: { letter: "J" },   R: { letter: "M" } } },
+      URB: { stickers: { U: { letter: "B" },   R: { letter: "N" },   B: { letter: "Q" } } },
+      UBL: { stickers: { U: { letter: "A" },   B: { letter: "R" },   L: { letter: "E" } } },
+      ULF: { stickers: { U: { letter: "D" },   L: { letter: "F" },   F: { letter: "I" } } },
+      DFR: { stickers: { D: { letter: "V" },   F: { letter: "K" },   R: { letter: "P" } } },
+      DRB: { stickers: { D: { letter: "W" },   R: { letter: "O" },   B: { letter: "T" } } },
+      DBL: { stickers: { D: { letter: "X" },   B: { letter: "S" },   L: { letter: "H" } } },
+      DLF: { stickers: { D: { letter: "U" },   L: { letter: "G" },   F: { letter: "L" } } },
+    }
+  };
+
+  // =========================
+  // Solved corner letters (54)
   // =========================
   function solvedCornerLetters54() {
     const a = Array(54).fill(".");
-
-    // U face corners
     a[0] = "A"; a[2] = "B"; a[8] = "C"; a[6] = "D";
-    // L face corners (UBL:L = 36 = E)
     a[36] = "E"; a[38] = "F"; a[44] = "G"; a[42] = "H";
-    // F face corners
     a[18] = "I"; a[20] = "J"; a[26] = "K"; a[24] = "L";
-    // R face corners
     a[9]  = "M"; a[11] = "N"; a[17] = "O"; a[15] = "P";
-    // B face corners
     a[45] = "Q"; a[47] = "R"; a[53] = "S"; a[51] = "T";
-    // D face corners
     a[27] = "U"; a[29] = "V"; a[35] = "W"; a[33] = "X";
+    return a;
+  }
+
+  // =========================
+  // Solved edge letters (54)
+  // NOTE: B-face left/right swapped to match your moveB orientation.
+  // =========================
+  function solvedEdgeLetters54() {
+    const a = Array(54).fill(".");
+    const U=0, R=9, F=18, D=27, L=36, B=45;
+
+    a[U+7] = BLIND_SCHEME.edges.UF.stickers.U.letter; a[F+1] = BLIND_SCHEME.edges.UF.stickers.F.letter; // C I
+    a[U+5] = BLIND_SCHEME.edges.UR.stickers.U.letter; a[R+1] = BLIND_SCHEME.edges.UR.stickers.R.letter; // B M
+    a[U+1] = BLIND_SCHEME.edges.UB.stickers.U.letter; a[B+1] = BLIND_SCHEME.edges.UB.stickers.B.letter; // A Q
+    a[U+3] = BLIND_SCHEME.edges.UL.stickers.U.letter; a[L+1] = BLIND_SCHEME.edges.UL.stickers.L.letter; // D E
+
+    a[D+1] = BLIND_SCHEME.edges.DF.stickers.D.letter; a[F+7] = BLIND_SCHEME.edges.DF.stickers.F.letter; // U K
+    a[D+5] = BLIND_SCHEME.edges.DR.stickers.D.letter; a[R+7] = BLIND_SCHEME.edges.DR.stickers.R.letter; // V O
+    a[D+7] = BLIND_SCHEME.edges.DB.stickers.D.letter; a[B+7] = BLIND_SCHEME.edges.DB.stickers.B.letter; // W S
+    a[D+3] = BLIND_SCHEME.edges.DL.stickers.D.letter; a[L+7] = BLIND_SCHEME.edges.DL.stickers.L.letter; // X G
+
+    a[F+5] = BLIND_SCHEME.edges.FR.stickers.F.letter; a[R+3] = BLIND_SCHEME.edges.FR.stickers.R.letter; // J P
+    a[B+3] = BLIND_SCHEME.edges.BR.stickers.B.letter; a[R+5] = BLIND_SCHEME.edges.BR.stickers.R.letter; // T N (swapped)
+    a[B+5] = BLIND_SCHEME.edges.BL.stickers.B.letter; a[L+3] = BLIND_SCHEME.edges.BL.stickers.L.letter; // R H (swapped)
+    a[F+3] = BLIND_SCHEME.edges.FL.stickers.F.letter; a[L+5] = BLIND_SCHEME.edges.FL.stickers.L.letter; // L F
 
     return a;
   }
 
+  // =========================
+  // Cube moves
+  // =========================
   function rotateFaceCW(arr, base) {
     const i = base;
     const t0 = arr[i+0], t1 = arr[i+1], t2 = arr[i+2],
@@ -238,7 +295,7 @@
   }
 
   // =========================
-  // Track renderer (same cycle same color, pairwise, no arrows)
+  // Track renderer
   // =========================
   function renderTrackHTML(cycles) {
     const colors = [
@@ -246,34 +303,25 @@
       "#b8f2e6", "#fca311", "#a78bfa", "#80ed99",
     ];
 
-    // 1) flatten: [{ch:'W', c:0}, {ch:'K', c:0}, {ch:'L', c:0}, ...]
     const flat = [];
     cycles.forEach((letters, ci) => {
       letters.forEach(ch => flat.push({ ch, ci }));
     });
 
-    // 2) global pair: (0,1) (2,3) (4,5) ...
     const pairHtml = [];
     for (let i = 0; i < flat.length; i += 2) {
       const a = flat[i];
       const b = flat[i + 1];
 
       const aHtml = `<span style="color:${colors[a.ci % colors.length]}">${a.ch}</span>`;
-      const bHtml = b
-        ? `<span style="color:${colors[b.ci % colors.length]}">${b.ch}</span>`
-        : "";
-
-      // 同一組內不留空格；組與組之間一個空格
+      const bHtml = b ? `<span style="color:${colors[b.ci % colors.length]}">${b.ch}</span>` : "";
       pairHtml.push(aHtml + bHtml);
     }
-
     return pairHtml.join(" ");
   }
 
-
-
   // =========================
-  // Multi-cycle tracking (returns array of cycles, each cycle = array of letters)
+  // CORNERS multi-cycle (with buffer piece pre-visited)
   // =========================
   function bufferMultiCyclesWithCornerCut(scramble){
     const solved = solvedCornerLetters54();
@@ -281,7 +329,6 @@
     applyAlg(cur, scramble);
 
     const STOP = new Set(["A","R","E"]);
-
     const CORNERS = [
       ["A","E","R"], // UBL
       ["B","N","Q"], // URB
@@ -292,7 +339,6 @@
       ["W","O","T"], // DRB
       ["X","H","S"], // DBL
     ];
-
     const cornerOf = new Map();
     CORNERS.forEach((grp, i) => grp.forEach(ch => cornerOf.set(ch, i)));
 
@@ -300,10 +346,16 @@
     const cornerId = (letter) => cornerOf.get(letter);
     const posLetters = solved.filter(x => x !== ".");
 
-    const visitedCornerGlobal = new Set();     // visited by output
-    const processedStartCorners = new Set();   // attempted as start
+    const visitedCornerGlobal = new Set();
+    const processedStartCorners = new Set();
 
-    function markGlobalByOutputLetter(letter){
+    const bufferCornerId = cornerId("E");
+    if (bufferCornerId !== undefined) {
+      visitedCornerGlobal.add(bufferCornerId);
+      processedStartCorners.add(bufferCornerId);
+    }
+
+    function markGlobal(letter){
       if (STOP.has(letter)) return;
       const cid = cornerId(letter);
       if (cid !== undefined) visitedCornerGlobal.add(cid);
@@ -312,96 +364,256 @@
     function runFromEUntilARE(){
       let p = "E";
       const out = [];
-      const cycleVisitedCorner = new Set();
+      const cycleVisited = new Set();
 
       for (let step = 0; step < 80; step++){
         const idx = idxOf(p);
         if (idx < 0) break;
 
         const s = cur[idx];
-
         if (STOP.has(s)) break;
 
         const cidS = cornerId(s);
-        if (cidS !== undefined && cycleVisitedCorner.has(cidS)) break;
+        if (cidS !== undefined && cycleVisited.has(cidS)) break;
 
         out.push(s);
-        if (cidS !== undefined) cycleVisitedCorner.add(cidS);
-        markGlobalByOutputLetter(s);
-
+        if (cidS !== undefined) cycleVisited.add(cidS);
+        markGlobal(s);
         p = s;
       }
-      return out; // array
+      return out;
     }
 
     function runCycleFrom(start){
       let p = start;
-
       const startCid = cornerId(start);
-      const out = [start];                  // keep start (e.g. D→I)
-      const cycleVisitedCorner = new Set();  // do NOT pre-add start corner
+
+      const out = [start];
+      const cycleVisited = new Set();
 
       for (let step = 0; step < 120; step++){
         const idx = idxOf(p);
         if (idx < 0) break;
 
         const s = cur[idx];
-
-        // immediate self-loop: skip entire cycle
         if (s === start && out.length === 1) return [];
-
-        // A/R/E not output: stop
         if (STOP.has(s)) break;
 
         const cidS = cornerId(s);
+        if (cidS !== undefined && cycleVisited.has(cidS)) break;
 
-        // hit already-output corner in this cycle: cut (do not output s)
-        if (cidS !== undefined && cycleVisitedCorner.has(cidS)) break;
-
-        // if s lands in starting corner (not first step): output then end
         if (cidS !== undefined && cidS === startCid && out.length > 1) {
           out.push(s);
-          markGlobalByOutputLetter(s);
+          markGlobal(s);
           break;
         }
 
         out.push(s);
-        if (cidS !== undefined) cycleVisitedCorner.add(cidS);
-        markGlobalByOutputLetter(s);
-
+        if (cidS !== undefined) cycleVisited.add(cidS);
+        markGlobal(s);
         p = s;
       }
-
       return (out.length > 1) ? out : [];
     }
 
     const cycles = [];
-
-    // Round 1
     const first = runFromEUntilARE();
     if (first.length) cycles.push(first);
 
-    // Next rounds
     while (true){
       let nextStart = null;
 
       for (const p of posLetters){
         if (STOP.has(p)) continue;
-
         const cid = cornerId(p);
         if (cid === undefined) continue;
-
         if (processedStartCorners.has(cid)) continue;
         if (visitedCornerGlobal.has(cid)) continue;
-
-        nextStart = p;
-        break;
+        nextStart = p; break;
       }
 
       if (!nextStart) break;
 
-      const startCid = cornerId(nextStart);
-      if (startCid !== undefined) processedStartCorners.add(startCid);
+      const cid = cornerId(nextStart);
+      if (cid !== undefined) processedStartCorners.add(cid);
+
+      const c = runCycleFrom(nextStart);
+      if (c.length) cycles.push(c);
+      if (cycles.length > 30) break;
+    }
+
+    return cycles;
+  }
+
+  // =========================
+  // EDGES multi-cycle:
+  // - Do not show U/K (buffer piece)
+  // - New cycle start priority: A highest
+  // - Q, CI, WS lowest (Q piece + CI + WS)
+  // =========================
+  function bufferMultiCyclesEdgesWithCut(scramble){
+    const solved = solvedEdgeLetters54();
+    const cur = solvedEdgeLetters54();
+    applyAlg(cur, scramble);
+
+    const EDGES = [
+      ["C","I"], // UF
+      ["B","M"], // UR
+      ["A","Q"], // UB
+      ["D","E"], // UL
+      ["U","K"], // DF buffer piece
+      ["V","O"], // DR
+      ["W","S"], // DB
+      ["X","G"], // DL
+      ["J","P"], // FR
+      ["T","N"], // BR
+      ["R","H"], // BL
+      ["L","F"], // FL
+    ];
+
+    const edgeOf = new Map();
+    EDGES.forEach((grp, i) => grp.forEach(ch => edgeOf.set(ch, i)));
+
+    const idxOf  = (letter) => solved.indexOf(letter);
+    const edgeId = (letter) => edgeOf.get(letter);
+    const posLetters = solved.filter(x => x !== ".");
+
+    const BUFFER = BLIND_SCHEME.edges.DF.stickers.D.letter; // "U"
+    const bufferEid = edgeId(BUFFER);
+
+    const otherOnSameEdge = (letter) => {
+      const eid = edgeId(letter);
+      if (eid === undefined) return null;
+      const pair = EDGES[eid];
+      return (pair[0] === letter) ? pair[1] : pair[0];
+    };
+    const BUFFER_MATE = otherOnSameEdge(BUFFER); // "K"
+
+    // STOP includes both U and K
+    const STOP = new Set([BUFFER]);
+    if (BUFFER_MATE) STOP.add(BUFFER_MATE);
+
+    // Low priority: Q piece (i.e. AQ but A itself is allowed), plus CI and WS
+    // => treat Q, C, I, W, S as low-priority triggers (but NOT A).
+    const lowPriorityLetters = ["Q","C","I","W","S"];
+    const lowPriorityEdgeIds = new Set(
+      lowPriorityLetters.map(ch => edgeId(ch)).filter(eid => eid !== undefined)
+    );
+
+    const visitedEdgeGlobal = new Set();
+    const processedStartEdges = new Set();
+
+    // Mark buffer piece visited/processed
+    if (bufferEid !== undefined) {
+      visitedEdgeGlobal.add(bufferEid);
+      processedStartEdges.add(bufferEid);
+    }
+
+    function markGlobal(letter){
+      if (STOP.has(letter)) return;
+      const eid = edgeId(letter);
+      if (eid !== undefined) visitedEdgeGlobal.add(eid);
+    }
+
+    function runFromBufferUntilStop(){
+      let p = BUFFER;
+      const out = [];
+      const cycleVisited = new Set();
+
+      for (let step = 0; step < 80; step++){
+        const idx = idxOf(p);
+        if (idx < 0) break;
+
+        const s = cur[idx];
+        if (STOP.has(s)) break;
+
+        const eidS = edgeId(s);
+        if (eidS !== undefined && cycleVisited.has(eidS)) break;
+
+        out.push(s);
+        if (eidS !== undefined) cycleVisited.add(eidS);
+        markGlobal(s);
+        p = s;
+      }
+      return out;
+    }
+
+    function runCycleFrom(start){
+      let p = start;
+      const startEid = edgeId(start);
+
+      const out = [start];
+      const cycleVisited = new Set();
+
+      for (let step = 0; step < 120; step++){
+        const idx = idxOf(p);
+        if (idx < 0) break;
+
+        const s = cur[idx];
+        if (s === start && out.length === 1) return [];
+        if (STOP.has(s)) break;
+
+        const eidS = edgeId(s);
+        if (eidS !== undefined && cycleVisited.has(eidS)) break;
+
+        if (eidS !== undefined && eidS === startEid && out.length > 1) {
+          out.push(s);
+          markGlobal(s);
+          break;
+        }
+
+        out.push(s);
+        if (eidS !== undefined) cycleVisited.add(eidS);
+        markGlobal(s);
+        p = s;
+      }
+      return (out.length > 1) ? out : [];
+    }
+
+    // Pick next start:
+    // 0) If 'A' is eligible, always pick it first
+    // 1) Otherwise pick eligible non-low-priority
+    // 2) Finally allow low-priority
+    function isEligibleStart(p){
+      if (STOP.has(p)) return false;
+      const eid = edgeId(p);
+      if (eid === undefined) return false;
+      if (processedStartEdges.has(eid)) return false;
+      if (visitedEdgeGlobal.has(eid)) return false;
+      return true;
+    }
+
+    function pickNextStart(){
+      // 0) A highest priority
+      if (isEligibleStart("A")) return "A";
+
+      // 1) Avoid low priority pieces
+      for (const p of posLetters){
+        if (!isEligibleStart(p)) continue;
+        const eid = edgeId(p);
+        if (lowPriorityEdgeIds.has(eid)) continue;
+        return p;
+      }
+
+      // 2) Allow low priority pieces
+      for (const p of posLetters){
+        if (!isEligibleStart(p)) continue;
+        return p;
+      }
+
+      return null;
+    }
+
+    const cycles = [];
+    const first = runFromBufferUntilStop();
+    if (first.length) cycles.push(first);
+
+    while (true){
+      const nextStart = pickNextStart();
+      if (!nextStart) break;
+
+      const eid = edgeId(nextStart);
+      if (eid !== undefined) processedStartEdges.add(eid);
 
       const c = runCycleFrom(nextStart);
       if (c.length) cycles.push(c);
@@ -412,6 +624,7 @@
     return cycles;
   }
 </script>
+
 
 </body>
 </html>
