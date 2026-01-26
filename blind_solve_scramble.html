@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SCRAMBLE</title>
+
+  <style>
+    body{
+      background:black;
+      color:white;
+      font-family:sans-serif;
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+    }
+    h1{ position:absolute; top:20px; margin:0; }
+    a.back{
+      position:absolute;
+      top:20px; left:20px;
+      color:white; text-decoration:none; font-size:16px;
+    }
+    #scramble{
+      font-size:22px; color:#aaa;
+      margin-bottom:24px;
+      max-width:90vw; text-align:center;
+      word-break:break-word; line-height:1.4;
+    }
+    twisty-player{ width:280px; height:280px; }
+    #new-scramble-btn{
+      margin-top:24px;
+      padding:12px 28px;
+      font-size:18px;
+      background:#222; color:white;
+      border:none; border-radius:8px;
+      cursor:pointer;
+    }
+    #new-scramble-btn:hover{ background:#333; }
+    #track{
+      margin-top:16px;
+      font-size:44px;
+      color:#fff;
+      font-weight:700;
+      letter-spacing:2px;
+      text-align:center;
+      max-width:92vw;
+      word-break:break-word;
+      line-height:1.2;
+    }
+  </style>
+
+  <script type="module">
+    import "https://cdn.cubing.net/v0/js/cubing/twisty";
+  </script>
+</head>
+
+<body>
+  <h1>SCRAMBLE</h1>
+  <a href="index.html" class="back">← Back to Home</a>
+
+  <div id="scramble"></div>
+
+  <twisty-player
+    id="twisty"
+    puzzle="3x3x3"
+    hint-facelets="floating"
+    background="none"
+    control-panel="none"
+  ></twisty-player>
+
+  <div id="track"></div>
+
+  <button id="new-scramble-btn">New Scramble</button>
+
+<script>
+  // =========================
+  // DOM
+  // =========================
+  const $ = (id) => document.getElementById(id);
+
+  // =========================
+  // Scramble UI
+  // =========================
+  function generateScramble(len = 20) {
+    const moves = ["R","L","U","D","F","B"];
+    const modifiers = ["", "'", "2"];
+    const out = [];
+    let prev = "";
+
+    while (out.length < len) {
+      const move = moves[Math.floor(Math.random() * moves.length)];
+      if (move === prev) continue;
+      prev = move;
+
+      const mod = modifiers[Math.floor(Math.random() * modifiers.length)];
+      out.push(move + mod);
+    }
+    return out.join(" ");
+  }
+
+  function setScramble(scramble) {
+    $("scramble").textContent = scramble;
+
+    const twisty = $("twisty");
+    twisty.setAttribute("experimental-setup-alg", scramble);
+    twisty.alg = "";
+
+    // ✅ 彩色 + 兩兩一組 + 移除箭頭
+    const cycles = bufferMultiCyclesWithCornerCut(scramble);
+    $("track").innerHTML = renderTrackHTML(cycles);
+  }
+
+  function updateScramble() {
+    setScramble(generateScramble());
+  }
+
+  $("new-scramble-btn").addEventListener("click", updateScramble);
+  window.addEventListener("load", updateScramble);
+
+  // =========================
+  // Speffz (corners only) - 54 stickers model
+  // =========================
+  function solvedCornerLetters54() {
+    const a = Array(54).fill(".");
+
+    // U face corners
+    a[0] = "A"; a[2] = "B"; a[8] = "C"; a[6] = "D";
+    // L face corners (UBL:L = 36 = E)
+    a[36] = "E"; a[38] = "F"; a[44] = "G"; a[42] = "H";
+    // F face corners
+    a[18] = "I"; a[20] = "J"; a[26] = "K"; a[24] = "L";
+    // R face corners
+    a[9]  = "M"; a[11] = "N"; a[17] = "O"; a[15] = "P";
+    // B face corners
+    a[45] = "Q"; a[47] = "R"; a[53] = "S"; a[51] = "T";
+    // D face corners
+    a[27] = "U"; a[29] = "V"; a[35] = "W"; a[33] = "X";
+
+    return a;
+  }
+
+  function rotateFaceCW(arr, base) {
+    const i = base;
+    const t0 = arr[i+0], t1 = arr[i+1], t2 = arr[i+2],
+          t3 = arr[i+3],           t5 = arr[i+5],
+          t6 = arr[i+6], t7 = arr[i+7], t8 = arr[i+8];
+
+    arr[i+0] = t6; arr[i+1] = t3; arr[i+2] = t0;
+    arr[i+3] = t7;              arr[i+5] = t1;
+    arr[i+6] = t8; arr[i+7] = t5; arr[i+8] = t2;
+  }
+
+  function moveU(a){
+    rotateFaceCW(a, 0);
+    const F=18, R=9, B=45, L=36;
+    const t = [a[F+0],a[F+1],a[F+2]];
+    [a[F+0],a[F+1],a[F+2]] = [a[R+0],a[R+1],a[R+2]];
+    [a[R+0],a[R+1],a[R+2]] = [a[B+0],a[B+1],a[B+2]];
+    [a[B+0],a[B+1],a[B+2]] = [a[L+0],a[L+1],a[L+2]];
+    [a[L+0],a[L+1],a[L+2]] = t;
+  }
+
+  function moveD(a){
+    rotateFaceCW(a, 27);
+    const F=18, R=9, B=45, L=36;
+    const t = [a[F+6],a[F+7],a[F+8]];
+    [a[F+6],a[F+7],a[F+8]] = [a[L+6],a[L+7],a[L+8]];
+    [a[L+6],a[L+7],a[L+8]] = [a[B+6],a[B+7],a[B+8]];
+    [a[B+6],a[B+7],a[B+8]] = [a[R+6],a[R+7],a[R+8]];
+    [a[R+6],a[R+7],a[R+8]] = t;
+  }
+
+  function moveR(a){
+    rotateFaceCW(a, 9);
+    const U=0, F=18, D=27, B=45;
+    const t = [a[U+2],a[U+5],a[U+8]];
+    [a[U+2],a[U+5],a[U+8]] = [a[F+2],a[F+5],a[F+8]];
+    [a[F+2],a[F+5],a[F+8]] = [a[D+2],a[D+5],a[D+8]];
+    [a[D+2],a[D+5],a[D+8]] = [a[B+6],a[B+3],a[B+0]];
+    [a[B+6],a[B+3],a[B+0]] = t;
+  }
+
+  function moveL(a){
+    rotateFaceCW(a, 36);
+    const U=0, F=18, D=27, B=45;
+    const t = [a[U+0],a[U+3],a[U+6]];
+    [a[U+0],a[U+3],a[U+6]] = [a[B+8],a[B+5],a[B+2]];
+    [a[B+8],a[B+5],a[B+2]] = [a[D+0],a[D+3],a[D+6]];
+    [a[D+0],a[D+3],a[D+6]] = [a[F+0],a[F+3],a[F+6]];
+    [a[F+0],a[F+3],a[F+6]] = t;
+  }
+
+  function moveF(a){
+    rotateFaceCW(a, 18);
+    const U=0, R=9, D=27, L=36;
+    const t = [a[U+6],a[U+7],a[U+8]];
+    [a[U+6],a[U+7],a[U+8]] = [a[L+8],a[L+5],a[L+2]];
+    [a[L+8],a[L+5],a[L+2]] = [a[D+2],a[D+1],a[D+0]];
+    [a[D+2],a[D+1],a[D+0]] = [a[R+0],a[R+3],a[R+6]];
+    [a[R+0],a[R+3],a[R+6]] = t;
+  }
+
+  function moveB(a){
+    rotateFaceCW(a, 45);
+    const U=0, R=9, D=27, L=36;
+    const t = [a[U+0],a[U+1],a[U+2]];
+    [a[U+0],a[U+1],a[U+2]] = [a[R+2],a[R+5],a[R+8]];
+    [a[R+2],a[R+5],a[R+8]] = [a[D+8],a[D+7],a[D+6]];
+    [a[D+8],a[D+7],a[D+6]] = [a[L+6],a[L+3],a[L+0]];
+    [a[L+6],a[L+3],a[L+0]] = t;
+  }
+
+  function applyMove(a, face){
+    switch(face){
+      case "U": return moveU(a);
+      case "D": return moveD(a);
+      case "R": return moveR(a);
+      case "L": return moveL(a);
+      case "F": return moveF(a);
+      case "B": return moveB(a);
+    }
+  }
+
+  function applyAlg(a, algStr){
+    const tokens = algStr.trim().split(/\s+/).filter(Boolean);
+    for (const tok of tokens){
+      const face = tok[0];
+      const suffix = tok.slice(1);
+
+      let times = 1;
+      if (suffix === "2") times = 2;
+      else if (suffix === "'") times = 3;
+
+      for (let i=0; i<times; i++) applyMove(a, face);
+    }
+  }
+
+  // =========================
+  // Track renderer (same cycle same color, pairwise, no arrows)
+  // =========================
+  function renderTrackHTML(cycles) {
+    const colors = [
+      "#ffd166", "#06d6a0", "#4cc9f0", "#f72585",
+      "#b8f2e6", "#fca311", "#a78bfa", "#80ed99",
+    ];
+
+    // 1) flatten: [{ch:'W', c:0}, {ch:'K', c:0}, {ch:'L', c:0}, ...]
+    const flat = [];
+    cycles.forEach((letters, ci) => {
+      letters.forEach(ch => flat.push({ ch, ci }));
+    });
+
+    // 2) global pair: (0,1) (2,3) (4,5) ...
+    const pairHtml = [];
+    for (let i = 0; i < flat.length; i += 2) {
+      const a = flat[i];
+      const b = flat[i + 1];
+
+      const aHtml = `<span style="color:${colors[a.ci % colors.length]}">${a.ch}</span>`;
+      const bHtml = b
+        ? `<span style="color:${colors[b.ci % colors.length]}">${b.ch}</span>`
+        : "";
+
+      // 同一組內不留空格；組與組之間一個空格
+      pairHtml.push(aHtml + bHtml);
+    }
+
+    return pairHtml.join(" ");
+  }
+
+
+
+  // =========================
+  // Multi-cycle tracking (returns array of cycles, each cycle = array of letters)
+  // =========================
+  function bufferMultiCyclesWithCornerCut(scramble){
+    const solved = solvedCornerLetters54();
+    const cur = solvedCornerLetters54();
+    applyAlg(cur, scramble);
+
+    const STOP = new Set(["A","R","E"]);
+
+    const CORNERS = [
+      ["A","E","R"], // UBL
+      ["B","N","Q"], // URB
+      ["C","J","M"], // UFR
+      ["D","F","I"], // ULF
+      ["U","L","G"], // DLF
+      ["V","K","P"], // DFR
+      ["W","O","T"], // DRB
+      ["X","H","S"], // DBL
+    ];
+
+    const cornerOf = new Map();
+    CORNERS.forEach((grp, i) => grp.forEach(ch => cornerOf.set(ch, i)));
+
+    const idxOf = (letter) => solved.indexOf(letter);
+    const cornerId = (letter) => cornerOf.get(letter);
+    const posLetters = solved.filter(x => x !== ".");
+
+    const visitedCornerGlobal = new Set();     // visited by output
+    const processedStartCorners = new Set();   // attempted as start
+
+    function markGlobalByOutputLetter(letter){
+      if (STOP.has(letter)) return;
+      const cid = cornerId(letter);
+      if (cid !== undefined) visitedCornerGlobal.add(cid);
+    }
+
+    function runFromEUntilARE(){
+      let p = "E";
+      const out = [];
+      const cycleVisitedCorner = new Set();
+
+      for (let step = 0; step < 80; step++){
+        const idx = idxOf(p);
+        if (idx < 0) break;
+
+        const s = cur[idx];
+
+        if (STOP.has(s)) break;
+
+        const cidS = cornerId(s);
+        if (cidS !== undefined && cycleVisitedCorner.has(cidS)) break;
+
+        out.push(s);
+        if (cidS !== undefined) cycleVisitedCorner.add(cidS);
+        markGlobalByOutputLetter(s);
+
+        p = s;
+      }
+      return out; // array
+    }
+
+    function runCycleFrom(start){
+      let p = start;
+
+      const startCid = cornerId(start);
+      const out = [start];                  // keep start (e.g. D→I)
+      const cycleVisitedCorner = new Set();  // do NOT pre-add start corner
+
+      for (let step = 0; step < 120; step++){
+        const idx = idxOf(p);
+        if (idx < 0) break;
+
+        const s = cur[idx];
+
+        // immediate self-loop: skip entire cycle
+        if (s === start && out.length === 1) return [];
+
+        // A/R/E not output: stop
+        if (STOP.has(s)) break;
+
+        const cidS = cornerId(s);
+
+        // hit already-output corner in this cycle: cut (do not output s)
+        if (cidS !== undefined && cycleVisitedCorner.has(cidS)) break;
+
+        // if s lands in starting corner (not first step): output then end
+        if (cidS !== undefined && cidS === startCid && out.length > 1) {
+          out.push(s);
+          markGlobalByOutputLetter(s);
+          break;
+        }
+
+        out.push(s);
+        if (cidS !== undefined) cycleVisitedCorner.add(cidS);
+        markGlobalByOutputLetter(s);
+
+        p = s;
+      }
+
+      return (out.length > 1) ? out : [];
+    }
+
+    const cycles = [];
+
+    // Round 1
+    const first = runFromEUntilARE();
+    if (first.length) cycles.push(first);
+
+    // Next rounds
+    while (true){
+      let nextStart = null;
+
+      for (const p of posLetters){
+        if (STOP.has(p)) continue;
+
+        const cid = cornerId(p);
+        if (cid === undefined) continue;
+
+        if (processedStartCorners.has(cid)) continue;
+        if (visitedCornerGlobal.has(cid)) continue;
+
+        nextStart = p;
+        break;
+      }
+
+      if (!nextStart) break;
+
+      const startCid = cornerId(nextStart);
+      if (startCid !== undefined) processedStartCorners.add(startCid);
+
+      const c = runCycleFrom(nextStart);
+      if (c.length) cycles.push(c);
+
+      if (cycles.length > 30) break;
+    }
+
+    return cycles;
+  }
+</script>
+
+</body>
+</html>

@@ -27,7 +27,8 @@ export const collAlgorithms = [
   { group: "P", name: "P1", img: "./images/coll_p1.png", alg: "R U2 R2 U' R2 U' R2 U2 R", display: "4 22 11 2 44 2 11 22 4" },
   { group: "P", name: "P2", img: "./images/coll_p2.png", alg: "R U R' U' R' F R2 U R' U' R U R' U' F'", display: "4512 164 4512 4512 3" },
   { group: "P", name: "P3", img: "./images/coll_p3.png", alg: "F U R U' R' U R U' R' R' F' R U R U' R'", display: "6 5421 5421 134 5421" },
-  { group: "P", name: "P4", img: "./images/coll_p4.png", alg: "R U' L' U R' U L U L' U L", display: "42 85 15 75857" },
+  { group: "P", name: "P4", img: "./images/coll_p4.png", alg: "R U R' U F' R U2 R U2 R' U2 R' F R", display: "4515 3422 422122 164" },
+  //{ group: "P", name: "P4", img: "./images/coll_p4.png", alg: "R U' L' U R' U L U L' U L", display: "42 85 15 75857" },
   { group: "P", name: "P5", img: "./images/coll_p5.png", alg: "R' U' F' R U R' U' R' F R2 U2 R' U2 R", display: "12345121644 221224" },
   { group: "P", name: "P6", img: "./images/coll_p6.png", alg: "R' F' U' F U' R U S' R' U R S", display: "1326 245S' 154S" },
 
@@ -37,7 +38,8 @@ export const collAlgorithms = [
   { group: "H", name: "H4", img: "./images/coll_h4.png", alg: "F R U' R' U R U2 R' U' R U R' U' F'", display: "6 4215 42212 4512 3" },
 
   { group: "U", name: "U1", img: "./images/coll_u1.png", alg: "R U R' U R U2 R' R' U' R U' R' U2 R", display: "4515 4221 1242 1224" },
-  { group: "U", name: "U2", img: "./images/coll_u2.png", alg: "R' F R U' R' U' R U R' F' R U R' U' R' F R F' R", display: "1 y-perm 4" },
+  //{ group: "U", name: "U2", img: "./images/coll_u2.png", alg: "R' F R U' R' U' R U R' F' R U R' U' R' F R F' R", display: "1 y-perm 4" },
+  { group: "U", name: "U2", img: "./images/coll_u2.png", alg: "r U R' U' r' F R2 U' R' U' R U2 R' U' F'", display: "(4)512 (1)644 2124 22 123" },
   { group: "U", name: "U3", img: "./images/coll_u3.png", alg: "R2 D' R U2 R' D R U2 R", display: "11 D' 4221 D 4224" },
   { group: "U", name: "U4", img: "./images/coll_u4.png", alg: "R2 D R' U2 R D' R' U2 R'", display: "44 D 1224 D' 1221" },
   { group: "U", name: "U5", img: "./images/coll_u5.png", alg: "F R U' R' U R U R' U R U' R' F'", display: "6 4215 4515 421 3" },
@@ -189,4 +191,37 @@ export const wvAlgorithms = [
   {group: "0 corner", name:"pi4", img: "./images/wv_pi4.png", alg: "R U' R2 U' R U' R' U2 R", display: "42112 421224"},
   {group: "0 corner", name:"sune1", img: "./images/wv_sune1.png", alg: "R U R' U' R U R' U' R U' R'", display: "4512 4512 421"},
   {group: "0 corner", name:"sune2", img: "./images/wv_sune2.png", alg: "R U' R' U' R U R' U R U2 R'", display: "4212 sune"}
-] 
+]
+
+// speffz.js
+export const BLIND_ORDER = {
+  edges:   ["UF","UR","UB","UL","DF","DR","DB","DL","FR","FL","BR","BL"],
+  corners: ["UFR","URB","UBL","ULF","DFR","DLF","DBL","DRB"],
+};
+
+export const BLIND_SCHEME = {
+  edges: {
+    UF: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "I", setup: "U2 r'" } } },
+    UR: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "M", setup: "R' F'" } } },
+    UB: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "Q", setup: "r'" } } },
+    UL: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "E", setup: "L F" } } },
+    DF: { stickers: { D: { letter: "U", setup: "F2" }, F: { letter: "K", setup: "r" } } },
+    DR: { stickers: { D: { letter: "V", setup: "D' F2" }, R: { letter: "O", setup: "D' r" } } },
+    DB: { stickers: { D: { letter: "W", setup: "M2" }, B: { letter: "S", setup: "M U2" } } },
+    DL: { stickers: { D: { letter: "X", setup: "D F2" }, L: { letter: "G", setup: "D r" } } },
+    FR: { stickers: { F: { letter: "J", setup: "R U" }, R: { letter: "P", setup: "F'" } } },
+    BR: { stickers: { B: { letter: "T", setup: "R' U" }, R: { letter: "N", setup: "R2 F'" } } },
+    BL: { stickers: { B: { letter: "R", setup: "L U'" }, L: { letter: "H", setup: "L2 F" } } },
+    FL: { stickers: { F: { letter: "L", setup: "L' U'" }, L: { letter: "F", setup: "F" } } },
+  },
+  corners: {
+    UFR: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "J", setup: "R U" },   R: { letter: "M", setup: "F' U'" } } },
+    URB: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "N", setup: "R2 F'" }, B: { letter: "Q", setup: "R'" } } },
+    UBL: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "R", setup: "L U'" },  L: { letter: "E", setup: "L F" } } },
+    ULF: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "F", setup: "F" },     F: { letter: "I", setup: "F2 R" } } },
+    DFR: { stickers: { D: { letter: "V", setup: "F2 U'" }, F: { letter: "K", setup: "R" },  R: { letter: "P", setup: "F'" } } },
+    DRB: { stickers: { D: { letter: "W", setup: "R2" },   R: { letter: "O", setup: "R F'" }, B:{ letter: "T", setup: "R' U" } } },
+    DBL: { stickers: { D: { letter: "X", setup: "D' R2" }, B: { letter: "S", setup: "D2 R" }, L:{ letter: "H", setup: "D2 F'" } } },
+    DLF: { stickers: { D: { letter: "U", setup: "F2" },    L: { letter: "G", setup: "F U'" }, F:{ letter: "L", setup: "F' R" } } },
+  }
+};

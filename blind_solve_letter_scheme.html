@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TUTORIALS</title>
+  <title>LETTER SCHEME</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     html, body {
@@ -275,7 +275,8 @@
   </div>
 
   <script type="module" src="https://cdn.cubing.net/v0/js/cubing/twisty"></script>
-  <script>
+  <script type="module">
+  import { BLIND_ORDER as ORDER, BLIND_SCHEME as SCHEME } from './algorithms.js';
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") window.location.href = "index.html";
     });
@@ -299,7 +300,7 @@
     const keyFlash = document.getElementById('keyFlash');
     const progressBar  = document.getElementById('progressBar');
     const progressText = document.getElementById('progressText');
-
+/*
     const ORDER = {
       edges:   ["UF","UR","UB","UL","DF","DR","DB","DL","FR","FL","BR","BL"],
       corners: ["UFR","URB","UBL","ULF","DFR","DLF","DBL","DRB"],
@@ -331,7 +332,7 @@
         DLF: { stickers: { D: { letter: "U", setup: "F2" },    L: { letter: "G", setup: "F U'" }, F:{ letter: "L", setup: "F' R" } } },
       }
     };
-
+*/
     function stickerFacesOf(pos){
       return Object.keys(
         (SCHEME.edges[pos]?.stickers) || (SCHEME.corners[pos]?.stickers) || {}
