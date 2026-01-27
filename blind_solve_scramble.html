@@ -23,7 +23,6 @@
       color:white; text-decoration:none; font-size:16px;
     }
 
-    /* Scramble row */
     #scramble-row{
       display:flex;
       align-items:center;
@@ -35,7 +34,6 @@
       flex-wrap:wrap;
     }
 
-    /* Editable scramble */
     #scramble-editor{
       font-size:22px;
       color:#aaa;
@@ -58,7 +56,6 @@
       box-shadow:0 0 0 2px rgba(255,255,255,0.06);
     }
 
-    /* Scramble tools */
     #scramble-tools{
       display:flex;
       gap:10px;
@@ -91,7 +88,6 @@
 
     twisty-player{ width:280px; height:280px; }
 
-    /* Track container */
     #track{
       margin-top:16px;
       color:#fff;
@@ -103,9 +99,7 @@
       line-height:1.2;
     }
 
-    .section{
-      margin-top:10px;
-    }
+    .section{ margin-top:10px; }
     .section-head{
       display:flex;
       align-items:center;
@@ -141,15 +135,15 @@
       cursor:pointer;
     }
 
-    /* Key fix: keep layout stable while hiding */
+    /* keep layout stable */
     .track-letters{
       font-size:44px;
       line-height:1.2;
       max-width:92vw;
       margin:0 auto;
 
-      display:block;            /* always occupies space */
-      visibility:hidden;        /* hidden but keeps space */
+      display:block;
+      visibility:hidden;
       opacity:0;
       pointer-events:none;
       transition: opacity 80ms linear;
@@ -173,7 +167,6 @@
   <h1>SCRAMBLE</h1>
   <a href="index.html" class="back">← Back to Home</a>
 
-  <!-- Scramble editor + tools -->
   <div id="scramble-row">
     <div id="scramble-editor" contenteditable="true" spellcheck="false"></div>
     <div id="scramble-tools">
@@ -183,7 +176,10 @@
       <button class="tool-btn" id="btn-apply">Apply</button>
     </div>
   </div>
-  <div id="scramble-hint">Edit the scramble then press Apply (WCA-style random-state 3x3 scramble, generator moves only).</div>
+  <div id="scramble-hint">
+    Apply supports: R L U D F B + M E S + wide r u f d b + rotations x y z, with optional ' or 2.
+    If center-moves are used, Apply will append x/y/z at the end to restore White-Up Green-Front.
+  </div>
 
   <twisty-player
     id="twisty"
@@ -196,9 +192,6 @@
   <div id="track"></div>
 
 <script>
-  // =========================
-  // DOM
-  // =========================
   const $ = (id) => document.getElementById(id);
 
   // =========================
@@ -208,11 +201,13 @@
     return (s || "").trim().replace(/\s+/g, " ");
   }
 
-  function isValidGeneratorScramble(s){
+  // Supported tokens:
+  // R L U D F B, M E S, wide r u f d b, rotations x y z (+ ' / 2)
+  function isValidSupportedScramble(s){
     const t = normalizeScrambleText(s);
     if (!t) return false;
     const tokens = t.split(" ");
-    const re = /^[RLUDFB](2|')?$/;
+    const re = /^[RLUDFBMESrufdbxyz](2|')?$/;
     return tokens.every(tok => re.test(tok));
   }
 
@@ -228,41 +223,12 @@
   // WCA-style random-state scramble (cubing.js)
   // =========================
   async function generateScrambleWCA333() {
-    // randomScrambleForEvent("333") returns a Promise<Alg>
     const alg = await window.randomScrambleForEvent("333");
     return alg.toString();
   }
 
   // =========================
-  // Track renderer
-  // =========================
-  function renderTrackHTML(cycles) {
-    const colors = [
-      "#ffd166", "#06d6a0", "#4cc9f0", "#f72585",
-      "#b8f2e6", "#fca311", "#a78bfa", "#80ed99",
-    ];
-
-    const flat = [];
-    cycles.forEach((letters, ci) => {
-      letters.forEach(ch => flat.push({ ch, ci }));
-    });
-
-    const pairHtml = [];
-    for (let i = 0; i < flat.length; i += 2) {
-      const a = flat[i];
-      const b = flat[i + 1];
-
-      const aHtml = `<span style="color:${colors[a.ci % colors.length]}">${a.ch}</span>`;
-      const bHtml = b ? `<span style="color:${colors[b.ci % colors.length]}">${b.ch}</span>` : "";
-      pairHtml.push(aHtml + bHtml);
-    }
-    return pairHtml.join(" ");
-  }
-
-  // =========================
-  // Sections show rules:
-  // - checkbox checked => always show
-  // - unchecked => show only while pressing button
+  // Sections show rules
   // =========================
   const holdState = { corners: false, edges: false };
 
@@ -294,13 +260,38 @@
     btn.addEventListener("pointercancel", up);
     btn.addEventListener("pointerleave", up);
 
-    // Fallbacks
     btn.addEventListener("mousedown", down);
     btn.addEventListener("mouseup", up);
     btn.addEventListener("mouseleave", up);
     btn.addEventListener("touchstart", down, { passive:false });
     btn.addEventListener("touchend", up);
     btn.addEventListener("touchcancel", up);
+  }
+
+  // =========================
+  // Track renderer
+  // =========================
+  function renderTrackHTML(cycles) {
+    const colors = [
+      "#ffd166", "#06d6a0", "#4cc9f0", "#f72585",
+      "#b8f2e6", "#fca311", "#a78bfa", "#80ed99",
+    ];
+
+    const flat = [];
+    cycles.forEach((letters, ci) => {
+      letters.forEach(ch => flat.push({ ch, ci }));
+    });
+
+    const pairHtml = [];
+    for (let i = 0; i < flat.length; i += 2) {
+      const a = flat[i];
+      const b = flat[i + 1];
+
+      const aHtml = `<span style="color:${colors[a.ci % colors.length]}">${a.ch}</span>`;
+      const bHtml = b ? `<span style="color:${colors[b.ci % colors.length]}">${b.ch}</span>` : "";
+      pairHtml.push(aHtml + bHtml);
+    }
+    return pairHtml.join(" ");
   }
 
   // =========================
@@ -352,7 +343,7 @@
     updateSectionVisibility();
   }
 
-  // Prevent spam-click issues during async scramble generation
+  // async New
   let generating = false;
   async function updateScrambleNew() {
     if (generating) return;
@@ -361,7 +352,6 @@
 
     try{
       const s = await generateScrambleWCA333();
-      // cubing.js scrambles are WCA notation for 333 and use generator moves
       setScramble(s);
     } finally {
       generating = false;
@@ -391,20 +381,21 @@
   });
 
   $("btn-apply").addEventListener("click", () => {
-    const s = getScrambleFromEditor();
-    if (!isValidGeneratorScramble(s)) {
-      alert("Invalid scramble. Only generator moves are allowed: R L U D F B with optional ' or 2, separated by spaces.");
+    const raw = getScrambleFromEditor();
+    if (!isValidSupportedScramble(raw)) {
+      alert("Invalid scramble.\nSupported: R L U D F B + M E S + wide r u f d b + rotations x y z, with optional ' or 2.");
       return;
     }
-    setScramble(s);
+
+    const fixed = appendXYZToRestoreWhiteUpGreenFront(raw);
+    setScramble(fixed);
   });
 
-  // Initial
   window.addEventListener("load", updateScrambleNew);
 
-  // =========================
-  // BLIND_SCHEME (ignore setup)
-  // =========================
+  // ============================================================
+  // BLIND_SCHEME
+  // ============================================================
   const BLIND_SCHEME = {
     edges: {
       UF: { stickers: { U: { letter: "C" },   F: { letter: "I" } } },
@@ -432,9 +423,9 @@
     }
   };
 
-  // =========================
-  // Solved corner letters (54)
-  // =========================
+  // ============================================================
+  // Solved letters (54)
+  // ============================================================
   function solvedCornerLetters54() {
     const a = Array(54).fill(".");
     a[0] = "A"; a[2] = "B"; a[8] = "C"; a[6] = "D";
@@ -446,35 +437,31 @@
     return a;
   }
 
-  // =========================
-  // Solved edge letters (54)
-  // NOTE: B-face left/right swapped to match your moveB orientation.
-  // =========================
   function solvedEdgeLetters54() {
     const a = Array(54).fill(".");
     const U=0, R=9, F=18, D=27, L=36, B=45;
 
-    a[U+7] = BLIND_SCHEME.edges.UF.stickers.U.letter; a[F+1] = BLIND_SCHEME.edges.UF.stickers.F.letter; // C I
-    a[U+5] = BLIND_SCHEME.edges.UR.stickers.U.letter; a[R+1] = BLIND_SCHEME.edges.UR.stickers.R.letter; // B M
-    a[U+1] = BLIND_SCHEME.edges.UB.stickers.U.letter; a[B+1] = BLIND_SCHEME.edges.UB.stickers.B.letter; // A Q
-    a[U+3] = BLIND_SCHEME.edges.UL.stickers.U.letter; a[L+1] = BLIND_SCHEME.edges.UL.stickers.L.letter; // D E
+    a[U+7] = BLIND_SCHEME.edges.UF.stickers.U.letter; a[F+1] = BLIND_SCHEME.edges.UF.stickers.F.letter;
+    a[U+5] = BLIND_SCHEME.edges.UR.stickers.U.letter; a[R+1] = BLIND_SCHEME.edges.UR.stickers.R.letter;
+    a[U+1] = BLIND_SCHEME.edges.UB.stickers.U.letter; a[B+1] = BLIND_SCHEME.edges.UB.stickers.B.letter;
+    a[U+3] = BLIND_SCHEME.edges.UL.stickers.U.letter; a[L+1] = BLIND_SCHEME.edges.UL.stickers.L.letter;
 
-    a[D+1] = BLIND_SCHEME.edges.DF.stickers.D.letter; a[F+7] = BLIND_SCHEME.edges.DF.stickers.F.letter; // U K
-    a[D+5] = BLIND_SCHEME.edges.DR.stickers.D.letter; a[R+7] = BLIND_SCHEME.edges.DR.stickers.R.letter; // V O
-    a[D+7] = BLIND_SCHEME.edges.DB.stickers.D.letter; a[B+7] = BLIND_SCHEME.edges.DB.stickers.B.letter; // W S
-    a[D+3] = BLIND_SCHEME.edges.DL.stickers.D.letter; a[L+7] = BLIND_SCHEME.edges.DL.stickers.L.letter; // X G
+    a[D+1] = BLIND_SCHEME.edges.DF.stickers.D.letter; a[F+7] = BLIND_SCHEME.edges.DF.stickers.F.letter;
+    a[D+5] = BLIND_SCHEME.edges.DR.stickers.D.letter; a[R+7] = BLIND_SCHEME.edges.DR.stickers.R.letter;
+    a[D+7] = BLIND_SCHEME.edges.DB.stickers.D.letter; a[B+7] = BLIND_SCHEME.edges.DB.stickers.B.letter;
+    a[D+3] = BLIND_SCHEME.edges.DL.stickers.D.letter; a[L+7] = BLIND_SCHEME.edges.DL.stickers.L.letter;
 
-    a[F+5] = BLIND_SCHEME.edges.FR.stickers.F.letter; a[R+3] = BLIND_SCHEME.edges.FR.stickers.R.letter; // J P
-    a[B+3] = BLIND_SCHEME.edges.BR.stickers.B.letter; a[R+5] = BLIND_SCHEME.edges.BR.stickers.R.letter; // T N (swapped)
-    a[B+5] = BLIND_SCHEME.edges.BL.stickers.B.letter; a[L+3] = BLIND_SCHEME.edges.BL.stickers.L.letter; // R H (swapped)
-    a[F+3] = BLIND_SCHEME.edges.FL.stickers.F.letter; a[L+5] = BLIND_SCHEME.edges.FL.stickers.L.letter; // L F
+    a[F+5] = BLIND_SCHEME.edges.FR.stickers.F.letter; a[R+3] = BLIND_SCHEME.edges.FR.stickers.R.letter;
+    a[B+3] = BLIND_SCHEME.edges.BR.stickers.B.letter; a[R+5] = BLIND_SCHEME.edges.BR.stickers.R.letter;
+    a[B+5] = BLIND_SCHEME.edges.BL.stickers.B.letter; a[L+3] = BLIND_SCHEME.edges.BL.stickers.L.letter;
+    a[F+3] = BLIND_SCHEME.edges.FL.stickers.F.letter; a[L+5] = BLIND_SCHEME.edges.FL.stickers.L.letter;
 
     return a;
   }
 
-  // =========================
-  // Cube moves
-  // =========================
+  // ============================================================
+  // Cube moves (faces)
+  // ============================================================
   function rotateFaceCW(arr, base) {
     const i = base;
     const t0 = arr[i+0], t1 = arr[i+1], t2 = arr[i+2],
@@ -546,34 +533,201 @@
     [a[L+6],a[L+3],a[L+0]] = t;
   }
 
-  function applyMove(a, face){
-    switch(face){
+  // ============================================================
+  // Slice moves (M E S)
+  // Convention:
+  // M direction as L
+  // E direction as D
+  // S direction as F
+  // ============================================================
+  function moveM(a){
+    const U=0, F=18, D=27, B=45;
+    const t = [a[U+1],a[U+4],a[U+7]];
+    [a[U+1],a[U+4],a[U+7]] = [a[B+7],a[B+4],a[B+1]];
+    [a[B+7],a[B+4],a[B+1]] = [a[D+1],a[D+4],a[D+7]];
+    [a[D+1],a[D+4],a[D+7]] = [a[F+1],a[F+4],a[F+7]];
+    [a[F+1],a[F+4],a[F+7]] = t;
+  }
+
+  function moveE(a){
+    const F=18, R=9, B=45, L=36;
+    const t = [a[F+3],a[F+4],a[F+5]];
+    [a[F+3],a[F+4],a[F+5]] = [a[L+3],a[L+4],a[L+5]];
+    [a[L+3],a[L+4],a[L+5]] = [a[B+3],a[B+4],a[B+5]];
+    [a[B+3],a[B+4],a[B+5]] = [a[R+3],a[R+4],a[R+5]];
+    [a[R+3],a[R+4],a[R+5]] = t;
+  }
+
+  function moveS(a){
+    const U=0, R=9, D=27, L=36;
+    const t = [a[U+3],a[U+4],a[U+5]];
+    [a[U+3],a[U+4],a[U+5]] = [a[L+7],a[L+4],a[L+1]];
+    [a[L+7],a[L+4],a[L+1]] = [a[D+5],a[D+4],a[D+3]];
+    [a[D+5],a[D+4],a[D+3]] = [a[R+1],a[R+4],a[R+7]];
+    [a[R+1],a[R+4],a[R+7]] = t;
+  }
+
+  // ============================================================
+  // Apply token (supports faces, slices, wide, and rotations)
+  // Wide moves:
+  // r = R + M'
+  // u = U + E'
+  // f = F + S
+  // d = D + E
+  // b = B + S'
+  //
+  // Rotations (implemented via face+slices):
+  // x = R + M' + L'
+  // y = U + E' + D'
+  // z = F + S  + B'
+  // ============================================================
+  function applyBasic(a, mv){
+    switch(mv){
       case "U": return moveU(a);
       case "D": return moveD(a);
       case "R": return moveR(a);
       case "L": return moveL(a);
       case "F": return moveF(a);
       case "B": return moveB(a);
+      case "M": return moveM(a);
+      case "E": return moveE(a);
+      case "S": return moveS(a);
     }
+  }
+
+  function times(fn, a, n){ for (let i=0;i<n;i++) fn(a); }
+  function prime(fn, a){ times(fn, a, 3); } // inverse
+
+  function wideQuarter(a, w){
+    switch(w){
+      case "r": moveR(a); prime(moveM, a); return;
+      case "u": moveU(a); prime(moveE, a); return;
+      case "f": moveF(a); moveS(a); return;
+      case "d": moveD(a); moveE(a); return;
+      case "b": moveB(a); prime(moveS, a); return;
+    }
+  }
+
+  function rotQuarter(a, r){
+    switch(r){
+      case "x":
+        moveR(a); prime(moveM, a); prime(moveL, a);
+        return;
+      case "y":
+        moveU(a); prime(moveE, a); prime(moveD, a);
+        return;
+      case "z":
+        moveF(a); moveS(a); prime(moveB, a);
+        return;
+    }
+  }
+
+  function applyMoveToken(a, move){
+    if ("rufdb".includes(move)) return wideQuarter(a, move);
+    if ("xyz".includes(move)) return rotQuarter(a, move);
+    return applyBasic(a, move);
   }
 
   function applyAlg(a, algStr){
-    const tokens = algStr.trim().split(/\s+/).filter(Boolean);
+    const tokens = normalizeScrambleText(algStr).split(" ").filter(Boolean);
     for (const tok of tokens){
-      const face = tok[0];
+      const move = tok[0];
       const suffix = tok.slice(1);
 
-      let times = 1;
-      if (suffix === "2") times = 2;
-      else if (suffix === "'") times = 3;
+      let t = 1;
+      if (suffix === "2") t = 2;
+      else if (suffix === "'") t = 3;
 
-      for (let i=0; i<times; i++) applyMove(a, face);
+      for (let i=0;i<t;i++) applyMoveToken(a, move);
     }
   }
 
-  // =========================
+  // ============================================================
+  // Auto-append x/y/z to restore White-Up Green-Front
+  // Implementation: track centers by labeling them and BFS rotations.
+  // Desired: U-center == "U" and F-center == "F"
+  // ============================================================
+  function initCenterState54(){
+    const a = Array(54).fill(".");
+    const U=0, R=9, F=18, D=27, L=36, B=45;
+    a[U+4] = "U";
+    a[R+4] = "R";
+    a[F+4] = "F";
+    a[D+4] = "D";
+    a[L+4] = "L";
+    a[B+4] = "B";
+    return a;
+  }
+
+  function centersSignature(a){
+    const U=0, R=9, F=18, D=27, L=36, B=45;
+    return `${a[U+4]}${a[R+4]}${a[F+4]}${a[D+4]}${a[L+4]}${a[B+4]}`;
+  }
+
+  function isSolvedOrientationCenters(a){
+    const U=0, F=18;
+    return a[U+4] === "U" && a[F+4] === "F";
+  }
+
+  function findRotationSuffixToRestoreCenters(algStr){
+    // If no center-affecting moves, skip.
+    // Face turns don't move centers; slices/wide/rotations can.
+    const tokens = normalizeScrambleText(algStr).split(" ").filter(Boolean);
+    const affectsCenters = tokens.some(t => {
+      const m = t[0];
+      return "MESrufdbxyz".includes(m);
+    });
+    if (!affectsCenters) return "";
+
+    const start = initCenterState54();
+    applyAlg(start, algStr);
+
+    if (isSolvedOrientationCenters(start)) return "";
+
+    // BFS over rotations x y z (quarter turns only); depth<=6 is plenty for 24 orientations.
+    const moves = ["x", "y", "z"];
+    const seen = new Set();
+    const q = [];
+
+    const sig0 = centersSignature(start);
+    seen.add(sig0);
+    q.push({ state: start, path: [] });
+
+    while (q.length){
+      const cur = q.shift();
+      if (cur.path.length > 6) continue;
+
+      for (const mv of moves){
+        const next = cur.state.slice();
+        rotQuarter(next, mv);
+
+        const sig = centersSignature(next);
+        if (seen.has(sig)) continue;
+        const path = cur.path.concat(mv);
+
+        if (isSolvedOrientationCenters(next)){
+          return path.join(" ");
+        }
+
+        seen.add(sig);
+        q.push({ state: next, path });
+      }
+    }
+
+    // Fallback (shouldn't happen): do nothing
+    return "";
+  }
+
+  function appendXYZToRestoreWhiteUpGreenFront(algStr){
+    const s = normalizeScrambleText(algStr);
+    const suffix = findRotationSuffixToRestoreCenters(s);
+    if (!suffix) return s;
+    return `${s} ${suffix}`.trim();
+  }
+
+  // ============================================================
   // CORNERS multi-cycle (with buffer piece pre-visited)
-  // =========================
+  // ============================================================
   function bufferMultiCyclesWithCornerCut(scramble){
     const solved = solvedCornerLetters54();
     const cur = solvedCornerLetters54();
@@ -581,14 +735,8 @@
 
     const STOP = new Set(["A","R","E"]);
     const CORNERS = [
-      ["A","E","R"], // UBL
-      ["B","N","Q"], // URB
-      ["C","J","M"], // UFR
-      ["D","F","I"], // ULF
-      ["U","L","G"], // DLF
-      ["V","K","P"], // DFR
-      ["W","O","T"], // DRB
-      ["X","H","S"], // DBL
+      ["A","E","R"], ["B","N","Q"], ["C","J","M"], ["D","F","I"],
+      ["U","L","G"], ["V","K","P"], ["W","O","T"], ["X","H","S"],
     ];
     const cornerOf = new Map();
     CORNERS.forEach((grp, i) => grp.forEach(ch => cornerOf.set(ch, i)));
@@ -696,27 +844,18 @@
     return cycles;
   }
 
-  // =========================
+  // ============================================================
   // EDGES multi-cycle
-  // =========================
+  // ============================================================
   function bufferMultiCyclesEdgesWithCut(scramble){
     const solved = solvedEdgeLetters54();
     const cur = solvedEdgeLetters54();
     applyAlg(cur, scramble);
 
     const EDGES = [
-      ["C","I"], // UF
-      ["B","M"], // UR
-      ["A","Q"], // UB
-      ["D","E"], // UL
-      ["U","K"], // DF buffer piece
-      ["V","O"], // DR
-      ["W","S"], // DB
-      ["X","G"], // DL
-      ["J","P"], // FR
-      ["T","N"], // BR
-      ["R","H"], // BL
-      ["L","F"], // FL
+      ["C","I"], ["B","M"], ["A","Q"], ["D","E"],
+      ["U","K"], ["V","O"], ["W","S"], ["X","G"],
+      ["J","P"], ["T","N"], ["R","H"], ["L","F"],
     ];
 
     const edgeOf = new Map();
@@ -837,7 +976,6 @@
         if (!isEligibleStart(p)) continue;
         return p;
       }
-
       return null;
     }
 
