@@ -236,6 +236,34 @@
       padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
       box-sizing: border-box;
     }
+    @media (max-width: 768px) {
+
+    /* 鍵盤不再限制寬度，直接吃滿螢幕 */
+    #mobilePad .vk{
+      max-width: none;
+      margin: 0;
+    }
+
+    /* 每一列填滿 */
+    #mobilePad .row{
+      justify-content: stretch;
+    }
+
+    /* 一般字母鍵：等寬撐滿 */
+    #mobilePad button.key{
+      flex: 1 1 0;
+      width: auto;
+      height: 52px;        /* 手機稍微大一點比較好按 */
+      font-size: 18px;
+    }
+
+    /* 寬鍵（⌫ / Enter）給比例，不用固定 px */
+    #mobilePad button.key.wide{
+      flex: 1.5 1 0;
+      width: auto;
+    }
+  }
+
   </style>
 </head>
 
