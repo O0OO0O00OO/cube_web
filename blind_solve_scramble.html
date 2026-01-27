@@ -22,25 +22,78 @@
       top:20px; left:20px;
       color:white; text-decoration:none; font-size:16px;
     }
-    #scramble{
-      font-size:22px; color:#aaa;
-      margin-bottom:24px;
-      max-width:90vw; text-align:center;
-      word-break:break-word; line-height:1.4;
+
+    /* Scramble row */
+    #scramble-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:18px;
+      max-width:92vw;
+      width:92vw;
+      justify-content:center;
+      flex-wrap:wrap;
     }
-    twisty-player{ width:280px; height:280px; }
-    #new-scramble-btn{
-      margin-top:24px;
-      padding:12px 28px;
-      font-size:18px;
-      background:#222; color:white;
-      border:none; border-radius:8px;
+
+    /* Editable scramble */
+    #scramble-editor{
+      font-size:22px;
+      color:#aaa;
+      max-width:70vw;
+      width:min(760px, 70vw);
+      text-align:center;
+      word-break:break-word;
+      line-height:1.4;
+      outline:none;
+
+      padding:10px 12px;
+      border:1px solid #222;
+      border-radius:10px;
+      background:#0b0b0b;
+      cursor:text;
+      user-select:text;
+    }
+    #scramble-editor:focus{
+      border-color:#444;
+      box-shadow:0 0 0 2px rgba(255,255,255,0.06);
+    }
+
+    /* Scramble tools */
+    #scramble-tools{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+    .tool-btn{
+      padding:10px 14px;
+      font-size:16px;
+      background:#222;
+      color:white;
+      border:none;
+      border-radius:8px;
       cursor:pointer;
+      white-space:nowrap;
     }
-    #new-scramble-btn:hover{ background:#333; }
+    .tool-btn:hover{ background:#333; }
+    .tool-btn:disabled{
+      opacity:0.55;
+      cursor:not-allowed;
+    }
+
+    #scramble-hint{
+      margin-top:6px;
+      font-size:12px;
+      color:#666;
+      text-align:center;
+      max-width:92vw;
+    }
+
+    twisty-player{ width:280px; height:280px; }
+
+    /* Track container */
     #track{
       margin-top:16px;
-      font-size:44px;
       color:#fff;
       font-weight:700;
       letter-spacing:2px;
@@ -49,10 +102,70 @@
       word-break:break-word;
       line-height:1.2;
     }
+
+    .section{
+      margin-top:10px;
+    }
+    .section-head{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
+    .section-btn{
+      font-size:32px;
+      padding:8px 14px;
+      background:#111;
+      color:#fff;
+      border:1px solid #333;
+      border-radius:12px;
+      cursor:pointer;
+      user-select:none;
+      touch-action:manipulation;
+    }
+    .section-btn:hover{ background:#171717; }
+
+    .section-check{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:16px;
+      color:#ddd;
+      user-select:none;
+    }
+    .section-check input{
+      width:18px;
+      height:18px;
+      cursor:pointer;
+    }
+
+    /* Key fix: keep layout stable while hiding */
+    .track-letters{
+      font-size:44px;
+      line-height:1.2;
+      max-width:92vw;
+      margin:0 auto;
+
+      display:block;            /* always occupies space */
+      visibility:hidden;        /* hidden but keeps space */
+      opacity:0;
+      pointer-events:none;
+      transition: opacity 80ms linear;
+    }
+    .track-letters.show{
+      visibility:visible;
+      opacity:1;
+    }
+
+    .spacer{ height:18px; }
   </style>
 
   <script type="module">
     import "https://cdn.cubing.net/v0/js/cubing/twisty";
+    import { randomScrambleForEvent } from "https://cdn.cubing.net/v0/js/cubing/scramble";
+    window.randomScrambleForEvent = randomScrambleForEvent;
   </script>
 </head>
 
@@ -60,7 +173,17 @@
   <h1>SCRAMBLE</h1>
   <a href="index.html" class="back">← Back to Home</a>
 
-  <div id="scramble"></div>
+  <!-- Scramble editor + tools -->
+  <div id="scramble-row">
+    <div id="scramble-editor" contenteditable="true" spellcheck="false"></div>
+    <div id="scramble-tools">
+      <button class="tool-btn" id="btn-new">New</button>
+      <button class="tool-btn" id="btn-copy">Copy</button>
+      <button class="tool-btn" id="btn-clear">Clear</button>
+      <button class="tool-btn" id="btn-apply">Apply</button>
+    </div>
+  </div>
+  <div id="scramble-hint">Edit the scramble then press Apply (WCA-style random-state 3x3 scramble, generator moves only).</div>
 
   <twisty-player
     id="twisty"
@@ -72,7 +195,6 @@
 
   <div id="track"></div>
 
-  <button id="new-scramble-btn">New Scramble</button>
 <script>
   // =========================
   // DOM
@@ -80,50 +202,205 @@
   const $ = (id) => document.getElementById(id);
 
   // =========================
-  // Scramble UI
+  // Scramble helpers
   // =========================
-  function generateScramble(len = 20) {
-    const moves = ["R","L","U","D","F","B"];
-    const modifiers = ["", "'", "2"];
-    const out = [];
-    let prev = "";
-
-    while (out.length < len) {
-      const move = moves[Math.floor(Math.random() * moves.length)];
-      if (move === prev) continue;
-      prev = move;
-
-      const mod = modifiers[Math.floor(Math.random() * modifiers.length)];
-      out.push(move + mod);
-    }
-    return out.join(" ");
+  function normalizeScrambleText(s){
+    return (s || "").trim().replace(/\s+/g, " ");
   }
 
+  function isValidGeneratorScramble(s){
+    const t = normalizeScrambleText(s);
+    if (!t) return false;
+    const tokens = t.split(" ");
+    const re = /^[RLUDFB](2|')?$/;
+    return tokens.every(tok => re.test(tok));
+  }
+
+  function getScrambleFromEditor(){
+    return normalizeScrambleText($("scramble-editor").textContent);
+  }
+
+  function setEditorScramble(s){
+    $("scramble-editor").textContent = s;
+  }
+
+  // =========================
+  // WCA-style random-state scramble (cubing.js)
+  // =========================
+  async function generateScrambleWCA333() {
+    // randomScrambleForEvent("333") returns a Promise<Alg>
+    const alg = await window.randomScrambleForEvent("333");
+    return alg.toString();
+  }
+
+  // =========================
+  // Track renderer
+  // =========================
+  function renderTrackHTML(cycles) {
+    const colors = [
+      "#ffd166", "#06d6a0", "#4cc9f0", "#f72585",
+      "#b8f2e6", "#fca311", "#a78bfa", "#80ed99",
+    ];
+
+    const flat = [];
+    cycles.forEach((letters, ci) => {
+      letters.forEach(ch => flat.push({ ch, ci }));
+    });
+
+    const pairHtml = [];
+    for (let i = 0; i < flat.length; i += 2) {
+      const a = flat[i];
+      const b = flat[i + 1];
+
+      const aHtml = `<span style="color:${colors[a.ci % colors.length]}">${a.ch}</span>`;
+      const bHtml = b ? `<span style="color:${colors[b.ci % colors.length]}">${b.ch}</span>` : "";
+      pairHtml.push(aHtml + bHtml);
+    }
+    return pairHtml.join(" ");
+  }
+
+  // =========================
+  // Sections show rules:
+  // - checkbox checked => always show
+  // - unchecked => show only while pressing button
+  // =========================
+  const holdState = { corners: false, edges: false };
+
+  function computeShow(section){
+    const cb = $(section + "-cb");
+    return !!(cb && cb.checked) || !!holdState[section];
+  }
+
+  function updateSectionVisibility(){
+    $("corners-letters").classList.toggle("show", computeShow("corners"));
+    $("edges-letters").classList.toggle("show", computeShow("edges"));
+  }
+
+  function wireHoldButton(section){
+    const btn = $(section + "-btn");
+
+    const down = (e) => {
+      e.preventDefault();
+      holdState[section] = true;
+      updateSectionVisibility();
+    };
+    const up = () => {
+      holdState[section] = false;
+      updateSectionVisibility();
+    };
+
+    btn.addEventListener("pointerdown", down);
+    btn.addEventListener("pointerup", up);
+    btn.addEventListener("pointercancel", up);
+    btn.addEventListener("pointerleave", up);
+
+    // Fallbacks
+    btn.addEventListener("mousedown", down);
+    btn.addEventListener("mouseup", up);
+    btn.addEventListener("mouseleave", up);
+    btn.addEventListener("touchstart", down, { passive:false });
+    btn.addEventListener("touchend", up);
+    btn.addEventListener("touchcancel", up);
+  }
+
+  // =========================
+  // Set scramble => update twisty + compute tracks
+  // =========================
   function setScramble(scramble) {
-    $("scramble").textContent = scramble;
+    const s = normalizeScrambleText(scramble);
+    setEditorScramble(s);
 
     const twisty = $("twisty");
-    twisty.setAttribute("experimental-setup-alg", scramble);
+    twisty.setAttribute("experimental-setup-alg", s);
     twisty.alg = "";
 
-    const cornerCycles = bufferMultiCyclesWithCornerCut(scramble);
-    const edgeCycles   = bufferMultiCyclesEdgesWithCut(scramble);
+    const cornerCycles = bufferMultiCyclesWithCornerCut(s);
+    const edgeCycles   = bufferMultiCyclesEdgesWithCut(s);
 
     $("track").innerHTML = `
-      <div style="font-size:32px; margin-bottom:10px;">CORNERS</div>
-      <div>${renderTrackHTML(cornerCycles)}</div>
-      <div style="height:18px;"></div>
-      <div style="font-size:32px; margin-bottom:10px;">EDGES</div>
-      <div>${renderTrackHTML(edgeCycles)}</div>
+      <div class="section" id="corners-section">
+        <div class="section-head">
+          <button class="section-btn" id="corners-btn" type="button">CORNERS</button>
+          <label class="section-check">
+            <input type="checkbox" id="corners-cb" checked />
+            Show
+          </label>
+        </div>
+        <div class="track-letters show" id="corners-letters">${renderTrackHTML(cornerCycles)}</div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="section" id="edges-section">
+        <div class="section-head">
+          <button class="section-btn" id="edges-btn" type="button">EDGES</button>
+          <label class="section-check">
+            <input type="checkbox" id="edges-cb" checked />
+            Show
+          </label>
+        </div>
+        <div class="track-letters show" id="edges-letters">${renderTrackHTML(edgeCycles)}</div>
+      </div>
     `;
+
+    $("corners-cb").addEventListener("change", updateSectionVisibility);
+    $("edges-cb").addEventListener("change", updateSectionVisibility);
+
+    wireHoldButton("corners");
+    wireHoldButton("edges");
+
+    updateSectionVisibility();
   }
 
-  function updateScramble() {
-    setScramble(generateScramble());
+  // Prevent spam-click issues during async scramble generation
+  let generating = false;
+  async function updateScrambleNew() {
+    if (generating) return;
+    generating = true;
+    $("btn-new").disabled = true;
+
+    try{
+      const s = await generateScrambleWCA333();
+      // cubing.js scrambles are WCA notation for 333 and use generator moves
+      setScramble(s);
+    } finally {
+      generating = false;
+      $("btn-new").disabled = false;
+    }
   }
 
-  $("new-scramble-btn").addEventListener("click", updateScramble);
-  window.addEventListener("load", updateScramble);
+  // Tools
+  $("btn-new").addEventListener("click", updateScrambleNew);
+
+  $("btn-copy").addEventListener("click", async () => {
+    const s = getScrambleFromEditor();
+    try {
+      await navigator.clipboard.writeText(s);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = s;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+  });
+
+  $("btn-clear").addEventListener("click", () => {
+    setEditorScramble("");
+  });
+
+  $("btn-apply").addEventListener("click", () => {
+    const s = getScrambleFromEditor();
+    if (!isValidGeneratorScramble(s)) {
+      alert("Invalid scramble. Only generator moves are allowed: R L U D F B with optional ' or 2, separated by spaces.");
+      return;
+    }
+    setScramble(s);
+  });
+
+  // Initial
+  window.addEventListener("load", updateScrambleNew);
 
   // =========================
   // BLIND_SCHEME (ignore setup)
@@ -295,32 +572,6 @@
   }
 
   // =========================
-  // Track renderer
-  // =========================
-  function renderTrackHTML(cycles) {
-    const colors = [
-      "#ffd166", "#06d6a0", "#4cc9f0", "#f72585",
-      "#b8f2e6", "#fca311", "#a78bfa", "#80ed99",
-    ];
-
-    const flat = [];
-    cycles.forEach((letters, ci) => {
-      letters.forEach(ch => flat.push({ ch, ci }));
-    });
-
-    const pairHtml = [];
-    for (let i = 0; i < flat.length; i += 2) {
-      const a = flat[i];
-      const b = flat[i + 1];
-
-      const aHtml = `<span style="color:${colors[a.ci % colors.length]}">${a.ch}</span>`;
-      const bHtml = b ? `<span style="color:${colors[b.ci % colors.length]}">${b.ch}</span>` : "";
-      pairHtml.push(aHtml + bHtml);
-    }
-    return pairHtml.join(" ");
-  }
-
-  // =========================
   // CORNERS multi-cycle (with buffer piece pre-visited)
   // =========================
   function bufferMultiCyclesWithCornerCut(scramble){
@@ -446,10 +697,7 @@
   }
 
   // =========================
-  // EDGES multi-cycle:
-  // - Do not show U/K (buffer piece)
-  // - New cycle start priority: A highest
-  // - Q, CI, WS lowest (Q piece + CI + WS)
+  // EDGES multi-cycle
   // =========================
   function bufferMultiCyclesEdgesWithCut(scramble){
     const solved = solvedEdgeLetters54();
@@ -489,12 +737,9 @@
     };
     const BUFFER_MATE = otherOnSameEdge(BUFFER); // "K"
 
-    // STOP includes both U and K
     const STOP = new Set([BUFFER]);
     if (BUFFER_MATE) STOP.add(BUFFER_MATE);
 
-    // Low priority: Q piece (i.e. AQ but A itself is allowed), plus CI and WS
-    // => treat Q, C, I, W, S as low-priority triggers (but NOT A).
     const lowPriorityLetters = ["Q","C","I","W","S"];
     const lowPriorityEdgeIds = new Set(
       lowPriorityLetters.map(ch => edgeId(ch)).filter(eid => eid !== undefined)
@@ -503,7 +748,6 @@
     const visitedEdgeGlobal = new Set();
     const processedStartEdges = new Set();
 
-    // Mark buffer piece visited/processed
     if (bufferEid !== undefined) {
       visitedEdgeGlobal.add(bufferEid);
       processedStartEdges.add(bufferEid);
@@ -570,10 +814,6 @@
       return (out.length > 1) ? out : [];
     }
 
-    // Pick next start:
-    // 0) If 'A' is eligible, always pick it first
-    // 1) Otherwise pick eligible non-low-priority
-    // 2) Finally allow low-priority
     function isEligibleStart(p){
       if (STOP.has(p)) return false;
       const eid = edgeId(p);
@@ -584,10 +824,8 @@
     }
 
     function pickNextStart(){
-      // 0) A highest priority
       if (isEligibleStart("A")) return "A";
 
-      // 1) Avoid low priority pieces
       for (const p of posLetters){
         if (!isEligibleStart(p)) continue;
         const eid = edgeId(p);
@@ -595,7 +833,6 @@
         return p;
       }
 
-      // 2) Allow low priority pieces
       for (const p of posLetters){
         if (!isEligibleStart(p)) continue;
         return p;
@@ -624,7 +861,6 @@
     return cycles;
   }
 </script>
-
 
 </body>
 </html>
