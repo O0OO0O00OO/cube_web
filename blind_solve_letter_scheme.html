@@ -13,13 +13,17 @@
       font-family: sans-serif;
     }
 
-    .center-wrap {
+    .center-wrap{
       height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
+
+      padding-bottom: var(--vk-height);
+      box-sizing: border-box;
     }
+
 
     h1 {
       position: absolute;
@@ -39,10 +43,12 @@
       font-size: 16px;
     }
 
-    .cube-box {
+    .cube-box{
       width: min(60vmin, 300px);
       height: min(60vmin, 300px);
+      /* transform: translateY(-60px);  刪掉 */
     }
+
 
     .panel {
       position: absolute;
@@ -102,7 +108,7 @@
 
     .key-flash {
       position: absolute;
-      bottom: 100px;
+      bottom: calc(var(--vk-height) + 24px);
       left: 50%;
       transform: translateX(-50%);
       padding: 10px 16px;
@@ -140,10 +146,11 @@
     }
     #pbEdges, #pbCorners, #pbAll { font-weight: 700; }
 
-    .br-text {
+    .br-text{
       position: absolute;
-      right: 14px;
-      bottom: 14px;
+      left: 14px;                 /* 改左邊 */
+      right: auto;                /* 關鍵：取消 right */
+      bottom: calc(var(--vk-height) + 14px);
       padding: 10px 12px;
       border-radius: 10px;
       backdrop-filter: blur(6px);
@@ -152,6 +159,7 @@
       white-space: pre-wrap;
       z-index: 1;
     }
+
 
     #memoryModal button {
       background: rgba(255,255,255,0.08);
@@ -163,6 +171,9 @@
       cursor: pointer;
     }
     #memoryModal button.primary { border-color: rgba(255,255,255,0.28); }
+    :root{
+      --vk-height: 260px;
+    }
 
     /* =========================
        Mobile A-Z pad
@@ -178,21 +189,33 @@
       backdrop-filter: blur(8px);
       z-index: 9998;
 
-      display: none; /* JS will toggle */
+      display: block; /* JS will toggle */
       user-select: none;
       touch-action: manipulation;
     }
-    #mobilePad .grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 8px;
-      max-width: 560px;
+    #mobilePad .vk{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-width: 720px;
       margin: 0 auto;
     }
-    #mobilePad button.key {
-      width: 100%;
-      padding: 12px 0;
-      border-radius: 12px;
+    #mobilePad .row{
+      display: flex;
+      gap: 6px;
+      justify-content: center;  /* 置中即可 */
+    }
+
+
+    #mobilePad button.key.wide{
+      width: 88px;
+    }
+    #mobilePad button.key{
+      flex: 0 0 auto;
+      width: 40px;
+      height: 48px;
+      padding: 0;
+      border-radius: 10px;
       font-size: 16px;
       font-weight: 800;
       letter-spacing: 1px;
@@ -201,14 +224,17 @@
       border: 1px solid rgba(255,255,255,0.18);
       cursor: pointer;
     }
+    #mobilePad button.key.wide{ width: 88px; }
     #mobilePad button.key:active{
       background: rgba(255,255,255,0.14);
       border-color: rgba(255,255,255,0.28);
     }
 
-    /* avoid overlap with pad */
-    @media (max-width: 900px){
-      .key-flash{ bottom: 170px; }
+
+    #mobilePad{
+      height: var(--vk-height);
+      padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+      box-sizing: border-box;
     }
   </style>
 </head>
@@ -261,12 +287,6 @@
         <input type="checkbox" id="memory" />
       </div>
 
-      <!-- NEW: mobile input toggle -->
-      <div class="row">
-        <label for="mobileInput">Mobile Input</label>
-        <input type="checkbox" id="mobileInput" />
-      </div>
-
       <div class="row">
         <button id="start" class="primary">Start / Reset</button>
       </div>
@@ -306,9 +326,10 @@
   </div>
 
   <!-- Mobile pad -->
-  <div id="mobilePad" aria-hidden="true">
-    <div class="grid" id="mobileGrid"></div>
+  <div id="mobilePad" aria-hidden="false">
+    <div class="vk" id="mobileGrid"></div>
   </div>
+
 
   <!-- Memory Modal -->
   <div id="memoryModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter: blur(6px); z-index:9999;">
@@ -347,7 +368,6 @@
       scheme: document.getElementById('scheme'),
       memory: document.getElementById('memory'),
       start:  document.getElementById('start'),
-      mobileInput: document.getElementById('mobileInput'),
     };
 
     document.addEventListener('keydown', (e) => {
@@ -753,30 +773,36 @@
     const mobilePad  = document.getElementById('mobilePad');
     const mobileGrid = document.getElementById('mobileGrid');
 
-    function isLikelyNoHardwareKeyboard(){
-      // Heuristic: touch device + small screen
-      const touch = (navigator.maxTouchPoints || 0) > 0 || ('ontouchstart' in window);
-      const small = window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
-      return touch && small;
-    }
+
 
     function setMobilePadVisible(v){
       if (!mobilePad) return;
-      mobilePad.style.display = v ? 'block' : 'none';
-      mobilePad.setAttribute('aria-hidden', v ? 'false' : 'true');
+      mobilePad.style.display = 'block';
+      mobilePad.setAttribute('aria-hidden', 'false');
     }
+
 
     function buildMobileKeys(){
       if (!mobileGrid) return;
-      mobileGrid.innerHTML = '';
-      for (let i=0; i<26; i++){
-        const ch = String.fromCharCode(65 + i);
-        const btn = document.createElement('button');
-        btn.className = 'key';
-        btn.type = 'button';
-        btn.textContent = ch;
 
-        // simulate keydown/keyup behavior
+      mobileGrid.innerHTML = '';
+
+      const rows = [
+        ["Q","W","E","R","T","Y","U","I","O","P"],
+        ["A","S","D","F","G","H","J","K","L"],
+        ["Z","X","C","V","B","N","M"],
+      ];
+
+      function makeBtn(label, cls = ''){
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `key ${cls}`.trim();
+        btn.textContent = label;
+        return btn;
+      }
+
+      // letter button behavior: pointerdown = down, pointerup = up
+      function wireLetter(btn, ch){
         btn.addEventListener('pointerdown', (e) => {
           e.preventDefault();
           handleLetterDown(ch);
@@ -787,38 +813,77 @@
         });
         btn.addEventListener('pointercancel', (e) => {
           e.preventDefault();
-          // cancel: just reset state + hide
           if (keyState.lastKey === ch) {
             hideKeyFlash();
             keyState.lastKey = null;
             keyState.shouldAdvanceOnRelease = false;
           }
         });
+      }
 
-        mobileGrid.appendChild(btn);
+      // Row 1
+      {
+        const r = document.createElement('div');
+        r.className = 'row';
+        rows[0].forEach(ch => {
+          const b = makeBtn(ch);
+          wireLetter(b, ch);
+          r.appendChild(b);
+        });
+        mobileGrid.appendChild(r);
+      }
+
+      // Row 2
+      {
+        const r = document.createElement('div');
+        r.className = 'row';
+        rows[1].forEach(ch => {
+          const b = makeBtn(ch);
+          wireLetter(b, ch);
+          r.appendChild(b);
+        });
+        mobileGrid.appendChild(r);
+      }
+
+      // Row 3 with Backspace / Enter
+      {
+        const r = document.createElement('div');
+        r.className = 'row';
+
+        const back = makeBtn('⌫', 'wide');
+        back.addEventListener('click', (e) => {
+          e.preventDefault();
+          // cancel current press state (does not remove recorded answers)
+          hideKeyFlash();
+          keyState.lastKey = null;
+          keyState.shouldAdvanceOnRelease = false;
+        });
+
+        const enter = makeBtn('Enter', 'wide');
+        enter.addEventListener('click', (e) => {
+          e.preventDefault();
+          // no-op by default; keep for future (e.g. memory modal)
+        });
+
+        r.appendChild(back);
+
+        rows[2].forEach(ch => {
+          const b = makeBtn(ch);
+          wireLetter(b, ch);
+          r.appendChild(b);
+        });
+
+        r.appendChild(enter);
+
+        mobileGrid.appendChild(r);
       }
     }
 
     function initMobilePad(){
       buildMobileKeys();
-
-      // default: auto-enable on likely phone/tablet
-      const auto = isLikelyNoHardwareKeyboard();
-      if (ui.mobileInput) ui.mobileInput.checked = auto;
-      setMobilePadVisible(ui.mobileInput?.checked);
-
-      if (ui.mobileInput){
-        ui.mobileInput.addEventListener('change', () => {
-          setMobilePadVisible(ui.mobileInput.checked);
-        });
-      }
-
-      // keep in sync on resize/orientation
-      window.addEventListener('resize', () => {
-        // do not override user manual choice; only adjust if checkbox is currently checked
-        if (ui.mobileInput?.checked) setMobilePadVisible(true);
-      });
+      setMobilePadVisible(true);
     }
+
   </script>
 </body>
 </html>
