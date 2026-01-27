@@ -231,6 +231,10 @@
   // Sections show rules
   // =========================
   const holdState = { corners: false, edges: false };
+  const uiState = {
+    showCorners: true,
+    showEdges: true,
+  };
 
   function computeShow(section){
     const cb = $(section + "-cb");
@@ -308,34 +312,45 @@
     const cornerCycles = bufferMultiCyclesWithCornerCut(s);
     const edgeCycles   = bufferMultiCyclesEdgesWithCut(s);
 
-    $("track").innerHTML = `
-      <div class="section" id="corners-section">
-        <div class="section-head">
-          <button class="section-btn" id="corners-btn" type="button">CORNERS</button>
-          <label class="section-check">
-            <input type="checkbox" id="corners-cb" checked />
-            Show
-          </label>
-        </div>
-        <div class="track-letters show" id="corners-letters">${renderTrackHTML(cornerCycles)}</div>
-      </div>
+$("track").innerHTML = `
+  <div class="section" id="corners-section">
+    <div class="section-head">
+      <button class="section-btn" id="corners-btn" type="button">CORNERS</button>
+      <label class="section-check">
+        <input type="checkbox" id="corners-cb" ${uiState.showCorners ? "checked" : ""} />
+        Show
+      </label>
+    </div>
+    <div class="track-letters ${uiState.showCorners ? "show" : ""}" id="corners-letters">
+      ${renderTrackHTML(cornerCycles)}
+    </div>
+  </div>
 
-      <div class="spacer"></div>
+  <div class="spacer"></div>
 
-      <div class="section" id="edges-section">
-        <div class="section-head">
-          <button class="section-btn" id="edges-btn" type="button">EDGES</button>
-          <label class="section-check">
-            <input type="checkbox" id="edges-cb" checked />
-            Show
-          </label>
-        </div>
-        <div class="track-letters show" id="edges-letters">${renderTrackHTML(edgeCycles)}</div>
-      </div>
-    `;
+  <div class="section" id="edges-section">
+    <div class="section-head">
+      <button class="section-btn" id="edges-btn" type="button">EDGES</button>
+      <label class="section-check">
+        <input type="checkbox" id="edges-cb" ${uiState.showEdges ? "checked" : ""} />
+        Show
+      </label>
+    </div>
+    <div class="track-letters ${uiState.showEdges ? "show" : ""}" id="edges-letters">
+      ${renderTrackHTML(edgeCycles)}
+    </div>
+  </div>
+`;
 
-    $("corners-cb").addEventListener("change", updateSectionVisibility);
-    $("edges-cb").addEventListener("change", updateSectionVisibility);
+
+    $("corners-cb").addEventListener("change", (e) => {
+      uiState.showCorners = e.target.checked;
+      updateSectionVisibility();
+    });
+    $("edges-cb").addEventListener("change", (e) => {
+      uiState.showEdges = e.target.checked;
+      updateSectionVisibility();
+    });
 
     wireHoldButton("corners");
     wireHoldButton("edges");
