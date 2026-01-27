@@ -54,6 +54,7 @@
       border-radius: 10px;
       font-size: 12px;
       backdrop-filter: blur(6px);
+      z-index: 10;
     }
     .panel h2 {
       margin: 0 0 8px;
@@ -115,6 +116,7 @@
       opacity: 0;
       transition: opacity .12s ease;
       pointer-events: none;
+      z-index: 9;
     }
     .key-flash.show { opacity: 1; }
     .key-flash.ok  { box-shadow: 0 0 16px rgba(0,255,128,.35); color: #33df27; }
@@ -148,6 +150,7 @@
       font-size: 24px;
       line-height: 1.4;
       white-space: pre-wrap;
+      z-index: 1;
     }
 
     #memoryModal button {
@@ -160,6 +163,53 @@
       cursor: pointer;
     }
     #memoryModal button.primary { border-color: rgba(255,255,255,0.28); }
+
+    /* =========================
+       Mobile A-Z pad
+       ========================= */
+    #mobilePad {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(0,0,0,0.75);
+      border-top: 1px solid rgba(255,255,255,0.14);
+      backdrop-filter: blur(8px);
+      z-index: 9998;
+
+      display: none; /* JS will toggle */
+      user-select: none;
+      touch-action: manipulation;
+    }
+    #mobilePad .grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    #mobilePad button.key {
+      width: 100%;
+      padding: 12px 0;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.18);
+      cursor: pointer;
+    }
+    #mobilePad button.key:active{
+      background: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.28);
+    }
+
+    /* avoid overlap with pad */
+    @media (max-width: 900px){
+      .key-flash{ bottom: 170px; }
+    }
   </style>
 </head>
 
@@ -211,6 +261,12 @@
         <input type="checkbox" id="memory" />
       </div>
 
+      <!-- NEW: mobile input toggle -->
+      <div class="row">
+        <label for="mobileInput">Mobile Input</label>
+        <input type="checkbox" id="mobileInput" />
+      </div>
+
       <div class="row">
         <button id="start" class="primary">Start / Reset</button>
       </div>
@@ -247,6 +303,11 @@
       <span style="color: #0000ff;">S</span><span style="color: #ff8800;">H</span><span style="color: #ffff00;">X</span>  <span style="color: #0000ff;">T</span><span style="color: #ff0000;">O</span><span style="color: #ffff00;">W</span>
       <span style="color: #ff8800;">G</span><span style="color: #ffff00;">U</span><span style="color: #00ff00;">L</span>  <span style="color: #00ff00;">K</span><span style="color: #ff0000;">P</span><span style="color: #ffff00;">V</span>
     </div>
+  </div>
+
+  <!-- Mobile pad -->
+  <div id="mobilePad" aria-hidden="true">
+    <div class="grid" id="mobileGrid"></div>
   </div>
 
   <!-- Memory Modal -->
@@ -286,6 +347,7 @@
       scheme: document.getElementById('scheme'),
       memory: document.getElementById('memory'),
       start:  document.getElementById('start'),
+      mobileInput: document.getElementById('mobileInput'),
     };
 
     document.addEventListener('keydown', (e) => {
@@ -300,39 +362,7 @@
     const keyFlash = document.getElementById('keyFlash');
     const progressBar  = document.getElementById('progressBar');
     const progressText = document.getElementById('progressText');
-/*
-    const ORDER = {
-      edges:   ["UF","UR","UB","UL","DF","DR","DB","DL","FR","FL","BR","BL"],
-      corners: ["UFR","URB","UBL","ULF","DFR","DLF","DBL","DRB"],
-    };
 
-    const SCHEME = {
-      edges: {
-        UF: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "I", setup: "U2 r'" } } },
-        UR: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "M", setup: "R' F'" } } },
-        UB: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "Q", setup: "r'" } } },
-        UL: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "E", setup: "L F" } } },
-        DF: { stickers: { D: { letter: "U", setup: "F2" }, F: { letter: "K", setup: "r" } } },
-        DR: { stickers: { D: { letter: "V", setup: "D' F2" }, R: { letter: "O", setup: "D' r" } } },
-        DB: { stickers: { D: { letter: "W", setup: "M2" }, B: { letter: "S", setup: "M U2" } } },
-        DL: { stickers: { D: { letter: "X", setup: "D F2" }, L: { letter: "G", setup: "D r" } } },
-        FR: { stickers: { F: { letter: "J", setup: "R U" }, R: { letter: "P", setup: "F'" } } },
-        BR: { stickers: { B: { letter: "T", setup: "R' U" }, R: { letter: "N", setup: "R2 F'" } } },
-        BL: { stickers: { B: { letter: "R", setup: "L U'" }, L: { letter: "H", setup: "L2 F" } } },
-        FL: { stickers: { F: { letter: "L", setup: "L' U'" }, L: { letter: "F", setup: "F" } } },
-      },
-      corners: {
-        UFR: { stickers: { U: { letter: "C", setup: "" },   F: { letter: "J", setup: "R U" },   R: { letter: "M", setup: "F' U'" } } },
-        URB: { stickers: { U: { letter: "B", setup: "U" },  R: { letter: "N", setup: "R2 F'" }, B: { letter: "Q", setup: "R'" } } },
-        UBL: { stickers: { U: { letter: "A", setup: "U2" }, B: { letter: "R", setup: "L U'" },  L: { letter: "E", setup: "L F" } } },
-        ULF: { stickers: { U: { letter: "D", setup: "U'" }, L: { letter: "F", setup: "F" },     F: { letter: "I", setup: "F2 R" } } },
-        DFR: { stickers: { D: { letter: "V", setup: "F2 U'" }, F: { letter: "K", setup: "R" },  R: { letter: "P", setup: "F'" } } },
-        DRB: { stickers: { D: { letter: "W", setup: "R2" },   R: { letter: "O", setup: "R F'" }, B:{ letter: "T", setup: "R' U" } } },
-        DBL: { stickers: { D: { letter: "X", setup: "D' R2" }, B: { letter: "S", setup: "D2 R" }, L:{ letter: "H", setup: "D2 F'" } } },
-        DLF: { stickers: { D: { letter: "U", setup: "F2" },    L: { letter: "G", setup: "F U'" }, F:{ letter: "L", setup: "F' R" } } },
-      }
-    };
-*/
     function stickerFacesOf(pos){
       return Object.keys(
         (SCHEME.edges[pos]?.stickers) || (SCHEME.corners[pos]?.stickers) || {}
@@ -522,11 +552,8 @@
     }
 
     function finalizeAsNormalFromMemory(){
-      // 視為沒有 memory：停表 & 用 normal PB 更新（並切換 UI 顯示跟著 checkbox）
       const elapsed = Date.now() - startTime;
       stopTimer();
-
-      // 強制寫到 normal PB
       maybeUpdatePB(deckState.mode, elapsed, 'normal');
 
       memoryWaiting = false;
@@ -546,7 +573,6 @@
         const elapsed = Date.now() - startTime;
         stopTimer();
 
-        // 正確：寫到 memory PB
         maybeUpdatePB(deckState.mode, elapsed, 'memory');
 
         memoryWaiting = false;
@@ -566,7 +592,6 @@
     if (memoryInput) {
       memoryInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') submitMemoryRecall();
-        // Esc 在 modal 內：同 cancel 行為
         if (e.key === 'Escape') {
           e.preventDefault();
           finalizeAsNormalFromMemory();
@@ -645,6 +670,9 @@
       updateProgressUI();
 
       if (timerEl) timerEl.textContent = "00:00.00";
+
+      // init mobile pad state
+      initMobilePad();
     });
 
     const keyState = {
@@ -652,11 +680,8 @@
       shouldAdvanceOnRelease: false,
     };
 
-    document.addEventListener('keydown', (e) => {
+    function handleLetterDown(key /* 'A'..'Z' */){
       if (isMemoryModalOpen()) return;
-      if (e.key === "Escape") return;
-
-      const key = e.key.toUpperCase();
       if (!/^[A-Z]$/.test(key)) return;
       if (keyState.lastKey === key) return;
 
@@ -678,12 +703,10 @@
         showKeyFlash(key, 'bad');
         keyState.shouldAdvanceOnRelease = false;
       }
-    });
+    }
 
-    document.addEventListener('keyup', (e) => {
+    function handleLetterUp(key /* 'A'..'Z' */){
       if (isMemoryModalOpen()) return;
-
-      const key = e.key.toUpperCase();
       if (!/^[A-Z]$/.test(key)) return;
       if (key !== keyState.lastKey) return;
 
@@ -699,7 +722,103 @@
 
       keyState.lastKey = null;
       keyState.shouldAdvanceOnRelease = false;
+    }
+
+    // Desktop keyboard -> reuse same handlers
+    document.addEventListener('keydown', (e) => {
+      if (isMemoryModalOpen()) return;
+      if (e.key === "Escape") return;
+
+      const key = e.key.toUpperCase();
+      if (!/^[A-Z]$/.test(key)) return;
+
+      // prevent repeat from holding key
+      if (e.repeat) return;
+
+      handleLetterDown(key);
     });
+
+    document.addEventListener('keyup', (e) => {
+      if (isMemoryModalOpen()) return;
+
+      const key = e.key.toUpperCase();
+      if (!/^[A-Z]$/.test(key)) return;
+
+      handleLetterUp(key);
+    });
+
+    /* =========================
+       Mobile pad implementation
+       ========================= */
+    const mobilePad  = document.getElementById('mobilePad');
+    const mobileGrid = document.getElementById('mobileGrid');
+
+    function isLikelyNoHardwareKeyboard(){
+      // Heuristic: touch device + small screen
+      const touch = (navigator.maxTouchPoints || 0) > 0 || ('ontouchstart' in window);
+      const small = window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
+      return touch && small;
+    }
+
+    function setMobilePadVisible(v){
+      if (!mobilePad) return;
+      mobilePad.style.display = v ? 'block' : 'none';
+      mobilePad.setAttribute('aria-hidden', v ? 'false' : 'true');
+    }
+
+    function buildMobileKeys(){
+      if (!mobileGrid) return;
+      mobileGrid.innerHTML = '';
+      for (let i=0; i<26; i++){
+        const ch = String.fromCharCode(65 + i);
+        const btn = document.createElement('button');
+        btn.className = 'key';
+        btn.type = 'button';
+        btn.textContent = ch;
+
+        // simulate keydown/keyup behavior
+        btn.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          handleLetterDown(ch);
+        });
+        btn.addEventListener('pointerup', (e) => {
+          e.preventDefault();
+          handleLetterUp(ch);
+        });
+        btn.addEventListener('pointercancel', (e) => {
+          e.preventDefault();
+          // cancel: just reset state + hide
+          if (keyState.lastKey === ch) {
+            hideKeyFlash();
+            keyState.lastKey = null;
+            keyState.shouldAdvanceOnRelease = false;
+          }
+        });
+
+        mobileGrid.appendChild(btn);
+      }
+    }
+
+    function initMobilePad(){
+      buildMobileKeys();
+
+      // default: auto-enable on likely phone/tablet
+      const auto = isLikelyNoHardwareKeyboard();
+      if (ui.mobileInput) ui.mobileInput.checked = auto;
+      setMobilePadVisible(ui.mobileInput?.checked);
+
+      if (ui.mobileInput){
+        ui.mobileInput.addEventListener('change', () => {
+          setMobilePadVisible(ui.mobileInput.checked);
+        });
+      }
+
+      // keep in sync on resize/orientation
+      window.addEventListener('resize', () => {
+        // do not override user manual choice; only adjust if checkbox is currently checked
+        if (ui.mobileInput?.checked) setMobilePadVisible(true);
+      });
+    }
   </script>
 </body>
 </html>
