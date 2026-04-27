@@ -17,8 +17,39 @@
     }
 
     .coll-container {
-      max-width: 800px;
+      max-width: 1200px;
       margin: 0 auto;
+    }
+
+    .parity-section {
+      max-width: 800px;
+      margin: 0 auto 50px auto;
+    }
+
+    .two-column-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .column-title {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 35px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #00e0ff;
+    }
+
+    .left-column,
+    .right-column {
+      min-width: 0;
+    }
+
+    .right-column {
+      min-width: 0;
     }
 
     .coll-group {
@@ -31,7 +62,8 @@
       padding-bottom: 5px;
     }
 
-    .coll-group h2 {
+    .coll-group h2,
+    .parity-section h2 {
       color: #00e0ff;
       margin: 0;
     }
@@ -60,6 +92,12 @@
       text-decoration: none;
       font-size: 16px;
     }
+
+    @media (max-width: 800px) {
+      .two-column-layout {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -70,61 +108,135 @@
 
   <div class="coll-container">
 
-    <!-- Special Case Algorithms -->
-    <div class="coll-group">
-      <div class="coll-group-header">
-        <h2>Special Case Algorithms</h2>
-      </div>
-
-      <!--<div class="coll-case"><div class="coll-text"><p><strong>A:</strong> M2</p></div></div>-->
-      <!--<div class="coll-case"><div class="coll-text"><p><strong>Q:</strong> 542 (5)4(2)</p></div></div>-->
-      <div class="coll-case"><div class="coll-text"><p><strong>C:</strong> U2 M' U2 M'</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>I:</strong> 2 134S 164S' 5 M2</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>W:</strong> M U2 M U2</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>S:</strong> M2 2 S134 S'164 5</p></div></div>
-    </div>
-
     <!-- Parity -->
-    <div class="coll-group">
+    <div class="parity-section">
       <div class="coll-group-header">
-        <h2>Parity Algorithm (2 options)</h2>
+        <h2>Parity Algorithm</h2>
       </div>
-
-      <div class="coll-case"><div class="coll-text"><p><strong>1:</strong> M2 U' M U2 M U' M' U2 M' U2</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>2:</strong> D' r2 U M2 U' r2 D</p></div></div>
+      <div class="coll-case">
+        <div class="coll-text">
+          <p>D' r2 U M2 U' r2 D</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Setup Moves -->
-    <div class="coll-group">
-      <div class="coll-group-header">
-        <h2>All setup moves</h2>
+    <div class="two-column-layout">
+
+      <!-- LEFT -->
+      <div class="left-column">
+        <div class="column-title">Edges</div>
+
+        <!-- Special Case Algorithms -->
+        <div class="coll-group">
+          <div class="coll-group-header">
+            <h2>Special Case Algorithms</h2>
+          </div>
+          <div class="coll-case"><div class="coll-text"><p><strong>A:</strong> none</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>Q:</strong> (U R U') (u R u')</p></div></div>
+          <br>
+          <div class="coll-case"><div class="coll-text"><p><strong>C:</strong> U2 M' U2 M'</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>W:</strong> M U2 M U2</p></div></div>
+          <br>
+          <div class="coll-case"><div class="coll-text"><p><strong>I:</strong> 2 134S 164S' 5 M2</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>S:</strong> M2 2 S134 S'164 5</p></div></div>
+        </div>
+
+        <!-- Setup Moves -->
+        <div class="coll-group">
+          <div class="coll-group-header">
+            <h2>All setup moves</h2>
+          </div>
+
+          <div class="coll-case"><div class="coll-text"><p><strong>D:</strong> L' U' L U</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>B:</strong> R U R' U'</p></div></div>
+          <br>
+          <div class="coll-case"><div class="coll-text"><p><strong>H:</strong> u R' u'</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>N:</strong> u R u'</p></div></div>
+          <br>
+          <div class="coll-case"><div class="coll-text"><p><strong>E:</strong> x' U L' U'</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>F:</strong> x' U L2 U'</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>G:</strong> x' U L U'</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>M:</strong> x' U' R U</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>O:</strong> x' U' R' U</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>P:</strong> x' U' R2 U</p></div></div>
+          <br>
+          <div class="coll-case"><div class="coll-text"><p><strong>L:</strong> U' L' U</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>R:</strong> U' L U</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>X:</strong> U' L2 U</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>J:</strong> U R U'</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>T:</strong> U R' U'</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>V:</strong> U R2 U'</p></div></div>
+          <br>
+          <div class="coll-case"><div class="coll-text"><p><strong>K:</strong> buffer</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>U:</strong> buffer</p></div></div>
+        </div>
+
       </div>
 
-      <div class="coll-case"><div class="coll-text"><p><strong>A:</strong> none</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>B:</strong> R U R' U'</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>C:</strong> special case (see above)</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>D:</strong> L' U' L U</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>E:</strong> x' U L' U'</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>F:</strong> x' U L2 U'</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>G:</strong> x' U L U'</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>H:</strong> u R' u'</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>I:</strong> special case (see above)</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>J:</strong> U R U'</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>K:</strong> buffer</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>L:</strong> U' L' U</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>M:</strong> x' U' R U</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>N:</strong> u R u'</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>O:</strong> x' U' R' U</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>P:</strong> x' U' R2 U</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>Q:</strong> (U R U') (u R u')</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>R:</strong> U' L U</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>S:</strong> special case (see above)</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>T:</strong> U R' U'</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>U:</strong> buffer</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>V:</strong> U R2 U'</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>W:</strong> special case (see above)</p></div></div>
-      <div class="coll-case"><div class="coll-text"><p><strong>X:</strong> U' L2 U</p></div></div>
+      <!-- RIGHT -->
+      <div class="right-column">
+        <div class="column-title">Corners</div>
+        <!-- General Case Algorithms -->
+        <div class="coll-group">
+          <div class="coll-group-header">
+            <h2>General Case Algorithms</h2>
+          </div>
+          <div class="coll-case"><div class="coll-text"><p><strong>V:</strong> (R U' R' U')(R U R' F')(R U R' U')R' F R</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>J:</strong> (  U' R' U')(R U R' F')(R U R' U')R' F R2</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>B:</strong> (R' U' R' U')(R U R' F')(R U R' U')R' F R'</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>T:</strong> (R2 U' R' U')(R U R' F')(R U R' U')R' F </p></div></div>
+        </div>
 
+        <!-- Jb-Perm -->
+        <div class="coll-group">
+          <div class="coll-group-header">
+            <h2>Jb-Perm</h2>
+          </div>
+          <div class="coll-case"><div class="coll-text"><p><strong>I:</strong> U2' (R U R' F' R U R' U'R' F R2 U' R') U</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>O:</strong> U' R2 U' (R U R' F' R U R' U'R' F R2 U' R) U</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>P:</strong> U' R U' (R U R' F' R U R' U'R' F R2 U' R2') U</p></div></div>
+        </div>
+
+        <!-- Ja-Perm -->
+        <div class="coll-group">
+          <div class="coll-group-header">
+            <h2>Ja-Perm</h2>
+          </div>
+          <div class="coll-case"><div class="coll-text"><p><strong>Q:</strong> (R' U L' U2 R U' R' U2 R L U')</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>C:</strong> (   U L' U2 R U' R' U2 R L U') R'</p></div></div>
+        </div>
+        
+        <!-- Set to V -->
+        <div class="coll-group">
+          <div class="coll-group-header">
+            <h2>Set to V</h2>
+          </div>
+          <div class="coll-case"><div class="coll-text"><p><strong>D:</strong> F2</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>F:</strong> F' D</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>G:</strong> F'</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>M:</strong> F</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>N:</strong> R' F</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>S:</strong> D F'</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>U:</strong> D</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>W:</strong> D2</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>X:</strong> D'</p></div></div>
+        </div>
+        <!-- Set to J -->
+        <div class="coll-group">
+          <div class="coll-group-header">
+            <h2>Set to J</h2>
+          </div>
+          <div class="coll-case"><div class="coll-text"><p><strong>K:</strong> F'</p></div></div>
+          <div class="coll-case"><div class="coll-text"><p><strong>L:</strong> F2</p></div></div>
+        </div>
+        <!-- Set to T -->
+        <div class="coll-group">
+          <div class="coll-group-header">
+            <h2>Set to T</h2>
+          </div>
+          <div class="coll-case"><div class="coll-text"><p><strong>H:</strong> D'</p></div></div>
+        </div>
+      </div>
     </div>
   </div>
 
